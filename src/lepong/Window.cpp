@@ -132,7 +132,7 @@ HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept
 }
 
 ///
-/// Adjusts the area size so that the client area is as big as size.
+/// Adjusts the area size so that the client area is as big as the provided size.
 ///
 LEPONG_NODISCARD static Vector2i AdjustAreaSize(const Vector2i& size) noexcept;
 
@@ -197,8 +197,7 @@ void SetWindowResizable(HWND window, bool resizable) noexcept
     constexpr DWORD kResizableStyle = WS_MAXIMIZEBOX | WS_THICKFRAME; // NOLINT: PLEASE STOP.
     const auto kStyle = GetWindowStyle(window);
 
-    SetWindowStyle(
-        window,
+    SetWindowStyle(window,
         resizable
            ? kStyle | kResizableStyle
            : kStyle ^ kResizableStyle);
