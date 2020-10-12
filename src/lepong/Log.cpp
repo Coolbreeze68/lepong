@@ -22,7 +22,7 @@ bool Init() noexcept
 
     if (sLog)
     {
-        Log::Log("Log file begin.");
+        Log("Log file begin.");
     }
 
     return sLog;
@@ -32,7 +32,7 @@ void Cleanup() noexcept
 {
     if (sLog)
     {
-        Log::Log("Log file end.");
+        Log("Log file end.");
         fclose(sLog);
         sLog = nullptr;
     }
