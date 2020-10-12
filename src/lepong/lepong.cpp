@@ -87,7 +87,7 @@ using ConstArrayReference = const T (&)[Size];
 
 ///
 /// Tries to run all the provided lifetime initialization functions.<br>
-/// If an initialization function fails, the cleanup functions of the initialized items are called.
+/// If an initialization function fails, the cleanup functions of the initialized items are called in reverse order.
 ///
 /// \return Whether all the items have been successfully initialized.
 ///
