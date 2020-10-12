@@ -101,12 +101,14 @@ static constexpr ItemLifetime kSystemLifetimes[] =
 ///
 /// A wrapper for the pretty ugly array reference syntax.
 ///
-template<typename Type, std::size_t Size>
-using ConstArrayReference = const Type (&)[Size];
+template<typename T, std::size_t Size>
+using ConstArrayReference = const T (&)[Size];
 
 ///
 /// Tries to run all the provided lifetime initialization functions.<br>
 /// If an initialization function fails, the cleanup functions of the initialized items are called.
+///
+/// \return Whether all the items have been successfully initialized.
 ///
 template<std::size_t NumItems>
 LEPONG_NODISCARD static bool TryInitItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept;
@@ -146,14 +148,14 @@ bool TryInitItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noe
 template<std::size_t NumItems>
 void CleanupItemsStartingAt(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes, unsigned index) noexcept
 {
-    for (int i = static_cast<int>(index) - 1; i >= 0; --i)
+    for (auto i = static_cast<int>(index) - 1; i >= 0; --i)
     {
         itemLifetimes[i].cleanup();
     }
 }
 
 ///
-/// \return Whether the window state was successfully initialized.
+/// \return Whether the game window was successfully initialized.
 ///
 LEPONG_NODISCARD static bool InitWindow() noexcept;
 
@@ -163,7 +165,7 @@ LEPONG_NODISCARD static bool InitWindow() noexcept;
 static void CleanupWindow() noexcept;
 
 ///
-/// Contains the lifetimes of all the game state objects.
+/// Contains the lifetimes of all the game state items.
 ///
 static constexpr ItemLifetime kStateLifetimes[] =
 {
