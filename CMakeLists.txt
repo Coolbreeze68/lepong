@@ -18,7 +18,7 @@ add_executable(lepong
     src/lepong/lepong.cpp
     src/lepong/Log.cpp
     src/lepong/Main.cpp
-    src/lepong/Window.cpp)
+    src/lepong/Window.cpp inc/lepong/Assert.h)
 
 target_link_libraries(lepong User32 OpenGL32)
 target_include_directories(lepong PUBLIC inc PRIVATE src)

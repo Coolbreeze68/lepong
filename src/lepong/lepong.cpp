@@ -4,6 +4,7 @@
 
 #include <cstdint>
 
+#include "lepong/Assert.h"
 #include "lepong/Attribute.h"
 #include "lepong/Log.h"
 #include "lepong/Window.h"
@@ -95,10 +96,7 @@ LEPONG_NODISCARD static bool TryInitItems(ConstArrayReference<ItemLifetime, NumI
 
 bool Init() noexcept
 {
-    if (sInitialized)
-    {
-        return false;
-    }
+    LEPONG_ASSERT_OR_RETURN_VAL(!sInitialized, false);
 
     sInitialized = TryInitItems(kGameLifetimes);
     return sInitialized;
@@ -234,10 +232,7 @@ LEPONG_NODISCARD static bool PollEvents() noexcept;
 
 void Run() noexcept
 {
-    if (sRunning || !sInitialized)
-    {
-        return;
-    }
+    LEPONG_ASSERT_OR_RETURN(sInitialized && !sRunning);
 
     sRunning = true;
 
@@ -279,11 +274,10 @@ void Dispatch(const MSG& msg) noexcept
 
 void Cleanup() noexcept
 {
-    if (sInitialized && !sRunning)
-    {
-        CleanupItems(kGameLifetimes);
-        sInitialized = false;
-    }
+    LEPONG_ASSERT_OR_RETURN(sInitialized && !sRunning);
+
+    CleanupItems(kGameLifetimes);
+    sInitialized = false;
 }
 
 } // namespace lepong

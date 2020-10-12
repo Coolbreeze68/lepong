@@ -6,11 +6,8 @@
 
 int main()
 {
-    const auto kCanRun = lepong::Init();
+    LEPONG_ASSERT_OR_RETURN_VAL(lepong::Init(), -1);
 
-    if (kCanRun)
-    {
-        lepong::Run();
-        lepong::Cleanup();
-    }
+    lepong::Run();
+    lepong::Cleanup();
 }

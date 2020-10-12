@@ -25,7 +25,7 @@ using PFNKeyCallback = void (*)(int key, bool pressed);
 /// \param callback The function called to process window events.
 /// \return Whether the system was successfully initialized.
 ///
-bool Init() noexcept;
+LEPONG_NODISCARD bool Init() noexcept;
 
 ///
 /// Sets the function to be called when a key input message is sent to the window.<br>

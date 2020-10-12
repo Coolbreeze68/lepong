@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "Assert.h"
 #include "Attribute.h"
 
 namespace lepong::Log
@@ -48,6 +49,8 @@ namespace lepong::Log
 template<typename... Args>
 void Log(const char* format, Args&&... args) noexcept
 {
+    LEPONG_ASSERT_OR_RETURN(format);
+
     // I have no idea why we have to add 1 here.
     const auto kSize = snprintf(nullptr, 0, format, std::forward<Args>(args)...) + 1;
 

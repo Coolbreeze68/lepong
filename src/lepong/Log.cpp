@@ -4,6 +4,7 @@
 
 #include <cstdio>
 
+#include "lepong/Assert.h"
 #include "lepong/Log.h"
 
 namespace lepong::Log
@@ -13,10 +14,7 @@ static FILE* sLog = nullptr;
 
 bool Init() noexcept
 {
-    if (sLog)
-    {
-        return false;
-    }
+    LEPONG_ASSERT_OR_RETURN_VAL(!sLog, false);
 
     fopen_s(&sLog, "lepong.log", "w");
 
@@ -30,21 +28,19 @@ bool Init() noexcept
 
 void Cleanup() noexcept
 {
-    if (sLog)
-    {
-        Log("Log file end.");
-        fclose(sLog);
-        sLog = nullptr;
-    }
+    LEPONG_ASSERT_OR_RETURN(sLog);
+
+    Log("Log file end.");
+    fclose(sLog);
+    sLog = nullptr;
 }
 
 void Log(const char* message) noexcept
 {
-    if (sLog && message)
-    {
-        fputs(message, sLog);
-        fputc('\n', sLog);
-    }
+    LEPONG_ASSERT_OR_RETURN(sLog && message);
+
+    fputs(message, sLog);
+    fputc('\n', sLog); // Good enough for our needs.
 }
 
 } // namespace lepong::Log

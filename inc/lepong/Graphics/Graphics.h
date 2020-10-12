@@ -6,6 +6,8 @@
 
 #include "Context.h"
 
+#include "lepong/Attribute.h"
+
 namespace lepong::Graphics
 {
 
@@ -15,12 +17,12 @@ namespace lepong::Graphics
 ///
 /// \return Whether the graphics system was successfully initialized.
 ///
-bool Init() noexcept;
+LEPONG_NODISCARD bool Init() noexcept;
 
 ///
 /// \return Whether the graphics system is initialized.
 ///
-bool IsInitialized() noexcept;
+LEPONG_NODISCARD bool IsInitialized() noexcept;
 
 ///
 /// Cleans up all resources used by the graphics system.<br>

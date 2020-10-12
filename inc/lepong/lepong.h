@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include "Assert.h"
+#include "Attribute.h"
+
 namespace lepong
 {
 
@@ -13,7 +16,7 @@ namespace lepong
 ///
 /// \return Whether the game was successfully initialized.
 ///
-bool Init() noexcept;
+LEPONG_NODISCARD bool Init() noexcept;
 
 ///
 /// Starts the game's main loop.

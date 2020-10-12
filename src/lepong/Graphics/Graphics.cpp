@@ -6,6 +6,8 @@
 
 #include "LoadOpenGLFunction.h"
 
+#include "lepong/Assert.h"
+
 namespace lepong::Graphics
 {
 
@@ -13,10 +15,7 @@ static HMODULE sOpenGLLibrary = nullptr;
 
 bool Init() noexcept
 {
-    if (sOpenGLLibrary)
-    {
-        return false;
-    }
+    LEPONG_ASSERT_OR_RETURN_VAL(!sOpenGLLibrary, false);
 
     sOpenGLLibrary = LoadLibraryA("OpenGL32.dll");
     return sOpenGLLibrary;
@@ -29,11 +28,10 @@ bool IsInitialized() noexcept
 
 void Cleanup() noexcept
 {
-    if (sOpenGLLibrary)
-    {
-        FreeLibrary(sOpenGLLibrary);
-        sOpenGLLibrary = nullptr;
-    }
+    LEPONG_ASSERT_OR_RETURN(sOpenGLLibrary);
+
+    FreeLibrary(sOpenGLLibrary);
+    sOpenGLLibrary = nullptr;
 }
 
 namespace Internal
@@ -41,6 +39,8 @@ namespace Internal
 
 PROC LoadOpenGLFunction(const char* name) noexcept
 {
+    LEPONG_ASSERT_OR_RETURN_VAL(sOpenGLLibrary && name, nullptr);
+
     const auto kFunction = wglGetProcAddress(name);
 
     if (!kFunction)
