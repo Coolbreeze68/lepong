@@ -2,6 +2,8 @@
 // Created by lepouki on 10/12/2020.
 //
 
+#include <iostream> // Debug
+
 #include "lepong/Window.h"
 
 namespace lepong
@@ -55,15 +57,56 @@ bool Init() noexcept
     return sInitialized;
 }
 
+///
+/// \param key The pressed key's virtual key code.
+///
+static void OnKeyPressed(int key) noexcept;
+
+///
+/// \param key The released key's virtual key code.
+///
+static void OnKeyReleased(int key) noexcept;
+
 LRESULT CALLBACK EventCallback(HWND window, UINT message, WPARAM wParam, LPARAM lParam) noexcept
 {
-    if (message == WM_CLOSE)
+    switch (message)
     {
+    case WM_CLOSE:
         PostQuitMessage(0);
+        return 0;
+
+    case WM_KEYDOWN:
+    {
+        // This is true if the key was up before the WM_KEYDOWN message.
+        const auto kJustPressed = !(static_cast<ULONG_PTR>(lParam) & 0x40000000u);
+
+        if (kJustPressed)
+        {
+            OnKeyPressed(wParam);
+        }
+
         return 0;
     }
 
+    case WM_KEYUP:
+        OnKeyReleased(wParam);
+        return 0;
+
+    default:
+        break;
+    }
+
     return DefWindowProcW(window, message, wParam, lParam);
+}
+
+void OnKeyPressed(int key) noexcept
+{
+    std::cout << key << std::endl;
+}
+
+void OnKeyReleased(int key) noexcept
+{
+    std::cout << key << std::endl;
 }
 
 bool InitSystems(WNDPROC callback) noexcept

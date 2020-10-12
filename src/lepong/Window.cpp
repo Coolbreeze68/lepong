@@ -10,7 +10,7 @@ namespace lepong::Window
 {
 
 static auto sInitialized = false;
-static auto sModule = GetModuleHandleW(nullptr); // NOLINT: Clang-Tidy thinks GetModuleHandleW can throw.
+static auto sLocalModule = GetModuleHandleW(nullptr); // NOLINT: Clang-Tidy thinks GetModuleHandleW can throw.
 
 ///
 /// Registers the window class used to create the game's window.
@@ -37,7 +37,7 @@ static bool RegisterWindowClass(WNDPROC callback) noexcept
     windowClass.lpfnWndProc = callback;
     windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     windowClass.lpszClassName = skClassName;
-    windowClass.hInstance = sModule;
+    windowClass.hInstance = sLocalModule;
     return RegisterClassW(&windowClass);
 }
 
@@ -45,13 +45,13 @@ void Cleanup() noexcept
 {
     if (sInitialized)
     {
-        UnregisterClassW(skClassName, sModule);
+        UnregisterClassW(skClassName, sLocalModule);
         sInitialized = false;
     }
 }
 
 ///
-/// Calculates the dimensions of the client area based on the provided <i>size</i>.<br>
+/// Calculates the dimensions of the client area based on the provided size.<br>
 /// The resulting client area is centered on the screen.
 ///
 LEPONG_NODISCARD static RECT CenterClientArea(const Vector2i& size) noexcept;
@@ -73,19 +73,16 @@ HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept
 
     return CreateWindowExW(
         WS_EX_APPWINDOW,
-        skClassName,
-        title,
+        skClassName, title,
         WS_OVERLAPPEDWINDOW, // NOLINT: Clang-Tidy needs to chill the FUCK down.
         kArea.left, kArea.top,
         kSize.x, kSize.y,
-        nullptr,
-        nullptr,
-        sModule,
-        nullptr);
+        nullptr, nullptr,
+        sLocalModule, nullptr);
 }
 
 ///
-/// Adjusts the area size so that the client area is as big as <i>size</i>.
+/// Adjusts the area size so that the client area is as big as size.
 ///
 LEPONG_NODISCARD static Vector2i AdjustAreaSize(const Vector2i& size) noexcept;
 
@@ -136,12 +133,12 @@ void DestroyWindow(HWND window) noexcept
 }
 
 ///
-/// Sets the <i>window</i>'s style to the provided <i>style</i>.
+/// Sets the provided window's style to the provided style.
 ///
 static void SetWindowStyle(HWND window, DWORD style) noexcept;
 
 ///
-/// \return The provided <i>window</i>'s style. Who could have guessed?
+/// \return The provided window's style. Who could have guessed?
 ///
 LEPONG_NODISCARD static DWORD GetWindowStyle(HWND window) noexcept;
 

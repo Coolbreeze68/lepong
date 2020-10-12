@@ -29,7 +29,7 @@ bool Init(WNDPROC callback) noexcept;
 void Cleanup() noexcept;
 
 ///
-/// Creates a window with the provided <i>size</i> and <i>title</i>.<br>
+/// Creates a window with the provided size and title.<br>
 /// Not storing the return value results in a memory leak.
 ///
 /// \return The newly created window or <code>nullptr</code> if the window system is not initialized.
@@ -37,14 +37,14 @@ void Cleanup() noexcept;
 LEPONG_NODISCARD HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept;
 
 ///
-/// Destroys the provided <i>window</i>.
+/// Destroys the provided window.
 ///
 /// \param window The window to destroy.
 ///
 void DestroyWindow(HWND window) noexcept;
 
 ///
-/// Sets the provided <i>window</i>'s resizable state.
+/// Sets the provided window's resizable state.
 ///
 /// \param window The window the change the resizable state of.
 /// \param resizable Whether the window should be resizable.
