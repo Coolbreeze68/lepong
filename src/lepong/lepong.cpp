@@ -14,7 +14,7 @@ namespace lepong
 {
 
 static auto sInitialized = false;
-static HWND sWindow = nullptr;
+static HWND sWindow;
 
 ///
 /// A struct holding the init and cleanup functions of an item.<br>
