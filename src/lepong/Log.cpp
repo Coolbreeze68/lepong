@@ -9,46 +9,45 @@
 namespace lepong::Log
 {
 
-static bool sInitialized = false;
-static FILE* sLog;
+static FILE* sLog = nullptr;
 
 bool Init() noexcept
 {
-    if (sInitialized)
+    if (sLog)
     {
         return false;
     }
 
-    sInitialized = !fopen_s(&sLog, "lepong.log", "w");
+    fopen_s(&sLog, "lepong.log", "w");
 
-    if (sInitialized)
+    if (sLog)
     {
         Log::Log("Log file begin.");
     }
 
-    return sInitialized;
+    return sLog;
 }
 
 void Cleanup() noexcept
 {
-    if (sInitialized)
+    if (sLog)
     {
         Log::Log("Log file end.");
         fclose(sLog);
-        sInitialized = false;
+        sLog = nullptr;
     }
 }
 
 void Log(const char* message) noexcept
 {
-    if (sInitialized)
+    if (sLog)
     {
         LEPONG_ASSERT_OR_RETURN(message,
             /* void */,
             "Message can't be nullptr.");
 
         fputs(message, sLog);
-        fputc('\n', sLog);
+        fputc(   '\n', sLog);
     }
 }
 
