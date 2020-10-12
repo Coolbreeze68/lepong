@@ -33,7 +33,7 @@ bool Init() noexcept
 ///
 static LRESULT CALLBACK OnMessage(HWND, UINT, WPARAM, LPARAM) noexcept;
 
-static constexpr auto skClassName = L"lepongWindow";
+static constexpr auto skClassName = L"lepong-Window";
 
 static bool RegisterWindowClass() noexcept
 {
