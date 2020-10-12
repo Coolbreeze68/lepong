@@ -38,6 +38,8 @@ bool Init() noexcept
         return false;
     }
 
+    // Don't need to use the fancy item initialization stuff here because
+    // we only have 2 items to initialize.
     if (InitGameSystems())
     {
         if (InitState())
