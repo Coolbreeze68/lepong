@@ -51,6 +51,7 @@ void Log(const char* format, Args&&... args) noexcept
 {
     LEPONG_ASSERT_OR_RETURN(format);
 
+    // This is very slow but it's definitely not a big concern.
     // I have no idea why we have to add 1 here.
     const auto kSize = snprintf(nullptr, 0, format, std::forward<Args>(args)...) + 1;
 
