@@ -24,7 +24,8 @@ struct ItemLifetime
 {
 public:
     ///
-    /// A generic initialization function.
+    /// A generic initialization function.<br>
+    /// Initialization functions must return false on failure.
     ///
     using PFNInit = bool (*)();
 
