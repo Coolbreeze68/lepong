@@ -8,7 +8,7 @@ namespace lepong
 {
 
 ///
-/// Initializes the game and all of its subsystems.<br>
+/// Initializes the game and all of its systems.<br>
 /// If the game is already initialized, this function returns false.
 ///
 /// \return Whether the game was successfully initialized.
@@ -21,7 +21,7 @@ bool Init() noexcept;
 void Run() noexcept;
 
 ///
-/// Cleans up resources used by the game and its subsystems.
+/// Cleans up resources used by the game and its systems.
 ///
 void Cleanup() noexcept;
 
