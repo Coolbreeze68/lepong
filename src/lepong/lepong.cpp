@@ -27,8 +27,7 @@ LEPONG_NODISCARD static bool InitGameSystems() noexcept;
 LEPONG_NODISCARD static bool InitState() noexcept;
 
 ///
-/// Cleans up the game's systems.<br>
-/// This documentation is very useful yes.
+/// Cleans up the game's systems. That one is usually pretty hard to guess.
 ///
 static void CleanupSystems() noexcept;
 
