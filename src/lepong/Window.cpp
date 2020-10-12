@@ -3,6 +3,7 @@
 //
 
 #include "lepong/Assert.h"
+#include "lepong/Attribute.h"
 #include "lepong/Window.h"
 
 namespace lepong::Window
@@ -14,7 +15,7 @@ static auto sModule = GetModuleHandleW(nullptr); // NOLINT: Clang-Tidy thinks Ge
 ///
 /// Registers the window class used to create the game's window.
 ///
-static bool RegisterWindowClass(WNDPROC callback) noexcept;
+LEPONG_NODISCARD static bool RegisterWindowClass(WNDPROC callback) noexcept;
 
 bool Init(WNDPROC callback) noexcept
 {
@@ -49,6 +50,12 @@ void Cleanup() noexcept
     }
 }
 
+///
+/// Calculates the dimensions of the client area based on the provided <i>size</i>.<br>
+/// The resulting client area is centered on the screen.
+///
+LEPONG_NODISCARD static RECT CenterClientArea(const Vector2i& size) noexcept;
+
 HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept
 {
     if (!sInitialized)
@@ -56,25 +63,108 @@ HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept
         return nullptr;
     }
 
+    const auto kArea = CenterClientArea(size);
+
+    const Vector2i kSize =
+    {
+        static_cast<int>(kArea.right - kArea.left),
+        static_cast<int>(kArea.bottom - kArea.top)
+    };
+
     return CreateWindowExW(
         WS_EX_APPWINDOW,
         skClassName,
         title,
         WS_OVERLAPPEDWINDOW, // NOLINT: Clang-Tidy needs to chill the FUCK down.
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
+        kArea.left, kArea.top,
+        kSize.x, kSize.y,
         nullptr,
         nullptr,
         sModule,
         nullptr);
 }
 
+///
+/// Adjusts the area size so that the client area is as big as <i>size</i>.
+///
+LEPONG_NODISCARD static Vector2i AdjustAreaSize(const Vector2i& size) noexcept;
+
+RECT CenterClientArea(const Vector2i& size) noexcept
+{
+    const Vector2i kScreenHalfSize =
+    {
+        GetSystemMetrics(SM_CXSCREEN) / 2,
+        GetSystemMetrics(SM_CYSCREEN) / 2
+    };
+
+    const auto kAreaHalfSize = AdjustAreaSize(size) / 2;
+
+    return
+    {
+        kScreenHalfSize.x - kAreaHalfSize.x, // left
+        kScreenHalfSize.y - kAreaHalfSize.y, // top
+        kScreenHalfSize.x + kAreaHalfSize.x, // right
+        kScreenHalfSize.y + kAreaHalfSize.y  // bottom
+    };
+}
+
+Vector2i AdjustAreaSize(const Vector2i& size) noexcept
+{
+    RECT areaRect =
+    {
+        0, 0,
+        size.x, size.y
+    };
+
+    AdjustWindowRectEx(
+        &areaRect,
+        WS_OVERLAPPEDWINDOW, // NOLINT: Shut up Clang-Tidy.
+        FALSE,
+        WS_EX_APPWINDOW);
+
+    return
+    {
+        static_cast<int>(areaRect.right), // left and top are 0.
+        static_cast<int>(areaRect.bottom) // ^
+    };
+}
+
 void DestroyWindow(HWND window) noexcept
 {
     LEPONG_ASSERT(window, "window can't be nullptr");
     ::DestroyWindow(window);
+}
+
+///
+/// Sets the <i>window</i>'s style to the provided <i>style</i>.
+///
+static void SetWindowStyle(HWND window, DWORD style) noexcept;
+
+///
+/// \return The provided <i>window</i>'s style. Who could have guessed?
+///
+LEPONG_NODISCARD static DWORD GetWindowStyle(HWND window) noexcept;
+
+void SetWindowResizable(HWND window, bool resizable) noexcept
+{
+    constexpr DWORD kResizableStyle = WS_MAXIMIZEBOX | WS_THICKFRAME; // NOLINT: PLEASE STOP.
+    const auto kStyle = GetWindowStyle(window);
+
+    SetWindowStyle(
+        window,
+        resizable
+           ? kStyle | kResizableStyle
+           : kStyle ^ kResizableStyle);
+}
+
+void SetWindowStyle(HWND window, DWORD style) noexcept
+{
+    SetWindowLongW(window, GWL_STYLE, style);
+}
+
+DWORD GetWindowStyle(HWND window) noexcept
+{
+    return GetWindowLongW(window, GWL_STYLE);
 }
 
 } // namespace lepong::Window

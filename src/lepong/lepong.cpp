@@ -29,7 +29,7 @@ static bool InitState() noexcept;
 
 ///
 /// Cleans up the game's systems.<br>
-/// This documentation is useful hmm hmm yes.
+/// This documentation is very useful yes.
 ///
 static void CleanupSystems() noexcept;
 
@@ -97,7 +97,9 @@ void Run() noexcept
     }
 
     sRunning = true;
+
     ShowWindow(sWindow, SW_SHOW);
+    Window::SetWindowResizable(sWindow, false);
 
     while (sRunning)
     {

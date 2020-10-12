@@ -7,6 +7,7 @@ add_executable(lepong
     inc/lepong/Math/Math.h
     inc/lepong/Math/Vector2.h
     inc/lepong/Assert.h
+    inc/lepong/Attribute.h
     inc/lepong/lepong.h
     inc/lepong/Window.h
     src/lepong/lepong.cpp

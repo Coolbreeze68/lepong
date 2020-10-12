@@ -6,6 +6,8 @@
 
 #include <type_traits>
 
+#include "lepong/Attribute.h"
+
 namespace lepong
 {
 
@@ -14,6 +16,12 @@ struct Vector2
 {
     Scalar x;
     Scalar y;
+
+public:
+    LEPONG_NODISCARD constexpr Vector2 operator/(Scalar s) const noexcept
+    {
+        return { x / s, y / s };
+    }
 };
 
 using Vector2f = Vector2<float>;

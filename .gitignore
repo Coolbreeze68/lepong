@@ -1,0 +1,5 @@
+# Editor cache
+.idea/
+
+# Build
+cmake-build-*/

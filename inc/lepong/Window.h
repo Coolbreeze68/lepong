@@ -6,6 +6,8 @@
 
 #include <Windows.h>
 
+#include "Attribute.h"
+
 #include "Math/Vector2.h"
 
 namespace lepong::Window
@@ -27,17 +29,26 @@ bool Init(WNDPROC callback) noexcept;
 void Cleanup() noexcept;
 
 ///
-/// Creates a window with the provided <i>size</i> and <i>title</i>.
+/// Creates a window with the provided <i>size</i> and <i>title</i>.<br>
+/// Not storing the return value results in a memory leak.
 ///
 /// \return The newly created window or <code>nullptr</code> if the window system is not initialized.
 ///
-HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept;
+LEPONG_NODISCARD HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept;
 
 ///
-/// Destroys the provided window.
+/// Destroys the provided <i>window</i>.
 ///
 /// \param window The window to destroy.
 ///
 void DestroyWindow(HWND window) noexcept;
+
+///
+/// Sets the provided <i>window</i>'s resizable state.
+///
+/// \param window The window the change the resizable state of.
+/// \param resizable Whether the window should be resizable.
+///
+void SetWindowResizable(HWND window, bool resizable) noexcept;
 
 } // namespace lepong::Window
