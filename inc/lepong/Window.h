@@ -43,7 +43,7 @@ void Cleanup() noexcept;
 
 ///
 /// Creates a window with the provided size and title.<br>
-/// Not storing the return value results in a memory leak.
+/// Not storing the returned window handle results in a memory leak.
 ///
 /// \return The newly created window or <code>nullptr</code> if the window system is not initialized.
 ///
