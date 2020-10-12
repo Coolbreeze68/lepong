@@ -144,8 +144,8 @@ void CleanupItemsStartingAt(ConstArrayReference<ItemLifetime, NumItems> itemLife
 ///
 static constexpr ItemLifetime kSystemLifetimes[] =
 {
-    { Log::Init, Log::Cleanup },
     { Window::Init, Window::Cleanup },
+    { Log::Init, Log::Cleanup },
     { Graphics::Init, Graphics::Cleanup }
 };
 
