@@ -18,7 +18,7 @@ static auto sInitialized = false;
 static HWND sWindow;
 
 ///
-/// A struct holding the init and cleanup functions of an item.<br>
+/// A class holding the init and cleanup functions of an item.<br>
 /// The item could be anything as long as its init and cleanup functions use the correct signatures.
 ///
 struct ItemLifetime
@@ -36,18 +36,37 @@ public:
     using PFNCleanup = void (*)();
 
 public:
-    PFNInit init;
-    PFNCleanup cleanup;
-
-public:
     ///
     /// Both init and cleanup functions must be provided.
     ///
     constexpr ItemLifetime(PFNInit init, PFNCleanup cleanup) noexcept
-        : init(init)
-        , cleanup(cleanup)
+        : mInit(init)
+        , mCleanup(cleanup)
     {
     }
+
+public:
+    ///
+    /// Pretty straight forward.
+    ///
+    /// \return Whether the item was successfully initialized.
+    ///
+    LEPONG_NODISCARD constexpr bool Init() const noexcept
+    {
+        return mInit();
+    }
+
+    ///
+    /// Pretty straight forward.
+    ///
+    constexpr void Cleanup() const noexcept
+    {
+        mCleanup();
+    }
+
+private:
+    PFNInit mInit;
+    PFNCleanup mCleanup;
 };
 
 ///
@@ -118,7 +137,7 @@ bool TryInitItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noe
 
     for (unsigned i = 0; succeeded && i < NumItems; ++i)
     {
-        succeeded = itemLifetimes[i].init();
+        succeeded = itemLifetimes[i].Init();
 
         if (!succeeded)
         {
@@ -134,7 +153,7 @@ void CleanupItemsStartingAt(ConstArrayReference<ItemLifetime, NumItems> itemLife
 {
     for (auto i = static_cast<int>(index) - 1; i >= 0; --i)
     {
-        itemLifetimes[i].cleanup();
+        itemLifetimes[i].Cleanup();
     }
 }
 
