@@ -56,7 +56,7 @@ bool Init() noexcept
 
 ///
 /// A struct holding the init and cleanup functions of an item.<br>
-/// This item could be anything as long as its init and cleanup functions use the correct signatures.
+/// The item could be anything as long as its init and cleanup functions use the correct signatures.
 ///
 struct ItemLifetime
 {
