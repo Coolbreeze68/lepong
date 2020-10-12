@@ -10,42 +10,92 @@ namespace lepong::Window
 {
 
 static auto sInitialized = false;
-static auto sLocalModule = GetModuleHandleW(nullptr); // NOLINT: Clang-Tidy thinks GetModuleHandleW can throw.
+static auto sModule = GetModuleHandleW(nullptr); // NOLINT: Clang-Tidy thinks GetModuleHandleW can throw.
 
 ///
 /// Registers the window class used to create the game's window.
 ///
-LEPONG_NODISCARD static bool RegisterWindowClass(WNDPROC callback) noexcept;
+LEPONG_NODISCARD static bool RegisterWindowClass() noexcept;
 
-bool Init(WNDPROC callback) noexcept
+bool Init() noexcept
 {
     if (sInitialized)
     {
         return false;
     }
 
-    LEPONG_ASSERT(callback, "callback can't be nullptr");
-    sInitialized = RegisterWindowClass(callback);
+    sInitialized = RegisterWindowClass();
     return sInitialized;
 }
 
+///
+/// The function called everytime a message is sent to the window.
+///
+static LRESULT CALLBACK OnMessage(HWND, UINT, WPARAM, LPARAM) noexcept;
+
 static constexpr auto skClassName = L"lepongWindow";
 
-static bool RegisterWindowClass(WNDPROC callback) noexcept
+static bool RegisterWindowClass() noexcept
 {
     WNDCLASSW windowClass = {};
-    windowClass.lpfnWndProc = callback;
+    windowClass.lpfnWndProc = OnMessage;
     windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     windowClass.lpszClassName = skClassName;
-    windowClass.hInstance = sLocalModule;
+    windowClass.hInstance = sModule;
     return RegisterClassW(&windowClass);
+}
+
+static PFNKeyCallback sKeyCallback = nullptr;
+
+LRESULT CALLBACK OnMessage(HWND window, UINT message, WPARAM wParam, LPARAM lParam) noexcept
+{
+    switch (message)
+    {
+    case WM_CLOSE:
+        PostQuitMessage(0);
+        // ^ This assumes there will always be a single window.
+        return 0;
+
+    case WM_KEYDOWN:
+    {
+        const bool kHeld = static_cast<ULONG_PTR>(lParam) & 0x40000000u;
+
+        if (kHeld)
+        {
+            // Ignore the message if the key is held down.
+            break;
+        }
+
+        LEPONG_FALLTHROUGH;
+    }
+
+    case WM_KEYUP:
+    {
+        if (sKeyCallback)
+        {
+            sKeyCallback(wParam, message == WM_KEYDOWN);
+            return 0;
+        }
+
+        break;
+    }
+
+    default: break;
+    }
+
+    return DefWindowProcW(window, message, wParam, lParam);
+}
+
+void SetKeyCallback(PFNKeyCallback callback) noexcept
+{
+    sKeyCallback = callback;
 }
 
 void Cleanup() noexcept
 {
     if (sInitialized)
     {
-        UnregisterClassW(skClassName, sLocalModule);
+        UnregisterClassW(skClassName, sModule);
         sInitialized = false;
     }
 }
@@ -78,7 +128,7 @@ HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept
         kArea.left, kArea.top,
         kSize.x, kSize.y,
         nullptr, nullptr,
-        sLocalModule, nullptr);
+        sModule, nullptr);
 }
 
 ///

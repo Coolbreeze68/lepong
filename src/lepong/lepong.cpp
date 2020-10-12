@@ -2,9 +2,13 @@
 // Created by lepouki on 10/12/2020.
 //
 
-#include <iostream> // Debug
+#include <cstdint>
 
+#include "lepong/Assert.h"
+#include "lepong/Attribute.h"
 #include "lepong/Window.h"
+
+#include "lepong/Graphics/Graphics.h"
 
 namespace lepong
 {
@@ -13,21 +17,14 @@ static auto sInitialized = false;
 static HWND sWindow = nullptr;
 
 ///
-/// The game's main event callback.
-///
-static LRESULT CALLBACK EventCallback(HWND, UINT, WPARAM, LPARAM) noexcept;
-
-///
 /// Initializes the game's systems.
 ///
-/// \param callback The game's event callback.
-///
-static bool InitSystems(WNDPROC callback) noexcept;
+LEPONG_NODISCARD static bool InitGameSystems() noexcept;
 
 ///
 /// Initializes the game's state and resources.
 ///
-static bool InitState() noexcept;
+LEPONG_NODISCARD static bool InitState() noexcept;
 
 ///
 /// Cleans up the game's systems.<br>
@@ -42,7 +39,7 @@ bool Init() noexcept
         return false;
     }
 
-    if (InitSystems(EventCallback))
+    if (InitGameSystems())
     {
         if (InitState())
         {
@@ -58,71 +55,165 @@ bool Init() noexcept
 }
 
 ///
-/// \param key The pressed key's virtual key code.
+/// A struct holding the init and cleanup functions of an item.<br>
+/// This item could be anything as long as its init and cleanup functions use the correct signatures.
 ///
-static void OnKeyPressed(int key) noexcept;
-
-///
-/// \param key The released key's virtual key code.
-///
-static void OnKeyReleased(int key) noexcept;
-
-LRESULT CALLBACK EventCallback(HWND window, UINT message, WPARAM wParam, LPARAM lParam) noexcept
+struct ItemLifetime
 {
-    switch (message)
-    {
-    case WM_CLOSE:
-        PostQuitMessage(0);
-        return 0;
+public:
+    ///
+    /// A generic initialization function.
+    ///
+    using PFNInit = bool (*)();
 
-    case WM_KEYDOWN:
-    {
-        // This is true if the key was up before the WM_KEYDOWN message.
-        const auto kJustPressed = !(static_cast<ULONG_PTR>(lParam) & 0x40000000u);
+    ///
+    /// A generic cleanup function.
+    ///
+    using PFNCleanup = void (*)();
 
-        if (kJustPressed)
+public:
+    PFNInit init;
+    PFNCleanup cleanup;
+
+public:
+    ///
+    /// Both init and cleanup functions must be provided.
+    ///
+    constexpr ItemLifetime(PFNInit init, PFNCleanup cleanup) noexcept
+        : init(init)
+        , cleanup(cleanup)
+    {
+        LEPONG_ASSERT(init, "init must not be nullptr");
+        LEPONG_ASSERT(cleanup, "cleanup must not be nullptr");
+    }
+};
+
+///
+/// All the system lifetimes.<br>
+/// A system has to be declared after all the systems it depends on.
+///
+static constexpr ItemLifetime kSystemLifetimes[] =
+{
+    { Window::Init, Window::Cleanup },
+    { Graphics::Init, Graphics::Cleanup }
+};
+
+///
+/// A wrapper for the pretty ugly array reference syntax.
+///
+template<typename Type, std::size_t Size>
+using ConstArrayReference = const Type (&)[Size];
+
+///
+/// Tries to run all the provided lifetime initialization functions.<br>
+/// If an initialization function fails, the cleanup functions of the initialized items are called.
+///
+template<std::size_t NumItems>
+LEPONG_NODISCARD static bool TryInitItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept;
+
+bool InitGameSystems() noexcept
+{
+    return TryInitItems(kSystemLifetimes);
+}
+
+///
+/// Cleans up all the items starting from the item at the provided index.<br>
+/// Items are cleaned up in reverse order.
+///
+/// \param index The index of the first system to cleanup.
+///
+template<std::size_t NumItems>
+static void CleanupItemsStartingAt(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes, unsigned index) noexcept;
+
+template<std::size_t NumItems>
+bool TryInitItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept
+{
+    auto succeeded = true;
+
+    for (unsigned i = 0; succeeded && i < NumItems; ++i)
+    {
+        succeeded = itemLifetimes[i].init();
+
+        if (!succeeded)
         {
-            OnKeyPressed(wParam);
+            CleanupItemsStartingAt(itemLifetimes, i);
         }
-
-        return 0;
     }
 
-    case WM_KEYUP:
-        OnKeyReleased(wParam);
-        return 0;
+    return succeeded;
+}
 
-    default:
-        break;
+template<std::size_t NumItems>
+void CleanupItemsStartingAt(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes, unsigned index) noexcept
+{
+    for (int i = static_cast<int>(index) - 1; i >= 0; --i)
+    {
+        itemLifetimes[i].cleanup();
     }
-
-    return DefWindowProcW(window, message, wParam, lParam);
 }
 
-void OnKeyPressed(int key) noexcept
+///
+/// \return Whether the window state was successfully initialized.
+///
+LEPONG_NODISCARD static bool InitWindow() noexcept;
+
+///
+/// Cleans up the game window.
+///
+static void CleanupWindow() noexcept;
+
+///
+/// Contains the lifetimes of all the game state objects.
+///
+static constexpr ItemLifetime kStateLifetimes[] =
 {
-    std::cout << key << std::endl;
-}
-
-void OnKeyReleased(int key) noexcept
-{
-    std::cout << key << std::endl;
-}
-
-bool InitSystems(WNDPROC callback) noexcept
-{
-    return Window::Init(callback);
-}
+    { InitWindow, CleanupWindow }
+};
 
 bool InitState() noexcept
 {
+    return TryInitItems(kStateLifetimes);
+}
+
+///
+/// \param key The pressed key's virtual key code.
+/// \param pressed Whether the key was pressed.
+///
+static void OnKeyEvent(int key, bool pressed) noexcept;
+
+bool InitWindow() noexcept
+{
+    Window::SetKeyCallback(OnKeyEvent);
     sWindow = Window::MakeWindow(Vector2i{ 1280, 720 }, L"lepong");
     return sWindow;
 }
 
+void CleanupWindow() noexcept
+{
+    Window::DestroyWindow(sWindow);
+}
+
+void OnKeyEvent(int key, bool pressed) noexcept
+{
+    (void)key;
+    (void)pressed;
+}
+
+///
+/// Calls the cleanup function of all the provided item lifetimes.
+///
+template<std::size_t NumItems>
+static void CleanupItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept;
+
 void CleanupSystems() noexcept
 {
-    Window::Cleanup();
+    CleanupItems(kSystemLifetimes);
+}
+
+template<std::size_t NumItems>
+void CleanupItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept
+{
+    CleanupItemsStartingAt(itemLifetimes, NumItems);
 }
 
 static auto sRunning = false;
@@ -130,7 +221,7 @@ static auto sRunning = false;
 ///
 /// \return Whether the game should keep running.
 ///
-static bool PollEvents() noexcept;
+LEPONG_NODISCARD static bool PollEvents() noexcept;
 
 void Run() noexcept
 {
@@ -148,6 +239,8 @@ void Run() noexcept
     {
         sRunning = PollEvents();
     }
+
+    ShowWindow(sWindow, SW_HIDE);
 }
 
 ///
@@ -155,7 +248,7 @@ void Run() noexcept
 ///
 static void Dispatch(const MSG& msg) noexcept;
 
-static bool PollEvents() noexcept
+bool PollEvents() noexcept
 {
     MSG msg = {};
     auto keepRunning = true;
@@ -194,7 +287,7 @@ void Cleanup() noexcept
 
 void CleanupState() noexcept
 {
-    Window::DestroyWindow(sWindow);
+    CleanupItems(kStateLifetimes);
 }
 
 } // namespace lepong

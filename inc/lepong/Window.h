@@ -14,13 +14,26 @@ namespace lepong::Window
 {
 
 ///
+/// A key input callback.
+///
+using PFNKeyCallback = void (*)(int key, bool pressed);
+
+///
 /// Initializes the window system.<br>
 /// If the window system is already initialized, this function returns false.
 ///
 /// \param callback The function called to process window events.
 /// \return Whether the system was successfully initialized.
 ///
-bool Init(WNDPROC callback) noexcept;
+bool Init() noexcept;
+
+///
+/// Sets the function to be called when a key input message is sent to the window.<br>
+/// Calling this function with nullptr disables the key callback.
+///
+/// \param callback The new key callback.
+///
+void SetKeyCallback(PFNKeyCallback callback) noexcept;
 
 ///
 /// Cleans up all resources used by the window system.<br>

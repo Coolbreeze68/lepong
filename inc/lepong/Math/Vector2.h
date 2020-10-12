@@ -18,6 +18,27 @@ struct Vector2
     Scalar y;
 
 public:
+    constexpr Vector2 operator*=(Scalar s) const noexcept
+    {
+        x *= s;
+        y *= s;
+
+        return *this;
+    }
+
+    constexpr Vector2 operator/=(Scalar s) const noexcept
+    {
+        x /= s;
+        y /= s;
+
+        return *this;
+    }
+
+    LEPONG_NODISCARD constexpr Vector2 operator*(Scalar s) const noexcept
+    {
+        return { x * s, y * s };
+    }
+
     LEPONG_NODISCARD constexpr Vector2 operator/(Scalar s) const noexcept
     {
         return { x / s, y / s };
