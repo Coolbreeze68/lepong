@@ -17,45 +17,6 @@ static auto sInitialized = false;
 static HWND sWindow = nullptr;
 
 ///
-/// Initializes the game's systems.
-///
-LEPONG_NODISCARD static bool InitGameSystems() noexcept;
-
-///
-/// Initializes the game's state and resources.
-///
-LEPONG_NODISCARD static bool InitState() noexcept;
-
-///
-/// Cleans up the game's systems. That one is usually pretty hard to guess.
-///
-static void CleanupSystems() noexcept;
-
-bool Init() noexcept
-{
-    if (sInitialized)
-    {
-        return false;
-    }
-
-    // Don't need to use the fancy item initialization stuff here because
-    // we only have 2 items to initialize.
-    if (InitGameSystems())
-    {
-        if (InitState())
-        {
-            sInitialized = true;
-        }
-        else
-        {
-            CleanupSystems();
-        }
-    }
-
-    return sInitialized;
-}
-
-///
 /// A struct holding the init and cleanup functions of an item.<br>
 /// The item could be anything as long as its init and cleanup functions use the correct signatures.
 ///
@@ -90,13 +51,32 @@ public:
 };
 
 ///
-/// All the system lifetimes.<br>
-/// A system has to be declared after all the systems it depends on.
+/// Initializes the game's systems.
 ///
-static constexpr ItemLifetime kSystemLifetimes[] =
+LEPONG_NODISCARD static bool InitGameSystems() noexcept;
+
+///
+/// Cleans up the game's systems.
+///
+static void CleanupGameSystems() noexcept;
+
+///
+/// Initializes the game's state and resources.
+///
+LEPONG_NODISCARD static bool InitState() noexcept;
+
+///
+/// Cleans up the game's state and resources.
+///
+static void CleanupState() noexcept;
+
+///
+/// All the game's lifetimes.
+///
+static constexpr ItemLifetime kGameLifetimes[] =
 {
-    { Window::Init, Window::Cleanup },
-    { Graphics::Init, Graphics::Cleanup }
+    { InitGameSystems, CleanupGameSystems },
+    { InitState, CleanupState }
 };
 
 ///
@@ -114,9 +94,15 @@ using ConstArrayReference = const T (&)[Size];
 template<std::size_t NumItems>
 LEPONG_NODISCARD static bool TryInitItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept;
 
-bool InitGameSystems() noexcept
+bool Init() noexcept
 {
-    return TryInitItems(kSystemLifetimes);
+    if (sInitialized)
+    {
+        return false;
+    }
+
+    sInitialized = TryInitItems(kGameLifetimes);
+    return sInitialized;
 }
 
 ///
@@ -156,6 +142,38 @@ void CleanupItemsStartingAt(ConstArrayReference<ItemLifetime, NumItems> itemLife
 }
 
 ///
+/// All the system lifetimes.<br>
+/// A system has to be declared after all the systems it depends on.
+///
+static constexpr ItemLifetime kSystemLifetimes[] =
+{
+    { Window::Init, Window::Cleanup },
+    { Graphics::Init, Graphics::Cleanup }
+};
+
+bool InitGameSystems() noexcept
+{
+    return TryInitItems(kSystemLifetimes);
+}
+
+///
+/// Calls the cleanup function of all the provided item lifetimes.
+///
+template<std::size_t NumItems>
+static void CleanupItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept;
+
+void CleanupGameSystems() noexcept
+{
+    CleanupItems(kSystemLifetimes);
+}
+
+template<std::size_t NumItems>
+void CleanupItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept
+{
+    CleanupItemsStartingAt(itemLifetimes, NumItems);
+}
+
+///
 /// \return Whether the game window was successfully initialized.
 ///
 LEPONG_NODISCARD static bool InitWindow() noexcept;
@@ -191,32 +209,20 @@ bool InitWindow() noexcept
     return sWindow;
 }
 
-void CleanupWindow() noexcept
-{
-    Window::DestroyWindow(sWindow);
-}
-
 void OnKeyEvent(int key, bool pressed) noexcept
 {
     (void)key;
     (void)pressed;
 }
 
-///
-/// Calls the cleanup function of all the provided item lifetimes.
-///
-template<std::size_t NumItems>
-static void CleanupItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept;
-
-void CleanupSystems() noexcept
+void CleanupWindow() noexcept
 {
-    CleanupItems(kSystemLifetimes);
+    Window::DestroyWindow(sWindow);
 }
 
-template<std::size_t NumItems>
-void CleanupItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept
+void CleanupState() noexcept
 {
-    CleanupItemsStartingAt(itemLifetimes, NumItems);
+    CleanupItems(kStateLifetimes);
 }
 
 static auto sRunning = false;
@@ -271,26 +277,13 @@ void Dispatch(const MSG& msg) noexcept
     DispatchMessageW(&msg);
 }
 
-///
-/// Cleans up the game's state and resources.
-///
-static void CleanupState() noexcept;
-
 void Cleanup() noexcept
 {
     if (sInitialized && !sRunning)
     {
-        // Order is important
-        CleanupState();
-        CleanupSystems();
-
+        CleanupItems(kGameLifetimes);
         sInitialized = false;
     }
-}
-
-void CleanupState() noexcept
-{
-    CleanupItems(kStateLifetimes);
 }
 
 } // namespace lepong
