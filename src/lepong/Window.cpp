@@ -9,7 +9,11 @@ namespace lepong::Window
 {
 
 static auto sInitialized = false;
+static auto sModule = GetModuleHandleW(nullptr); // NOLINT: Clang-Tidy thinks GetModuleHandleW can throw.
 
+///
+/// Registers the window class used to create the game's window.
+///
 static bool RegisterWindowClass(WNDPROC callback) noexcept;
 
 bool Init(WNDPROC callback) noexcept
@@ -24,17 +28,15 @@ bool Init(WNDPROC callback) noexcept
     return sInitialized;
 }
 
-#define LEPONG_THIS_MODULE GetModuleHandleW(nullptr)
-
 static constexpr auto skClassName = L"lepongWindow";
 
 static bool RegisterWindowClass(WNDPROC callback) noexcept
 {
     WNDCLASSW windowClass = {};
-    windowClass.lpszClassName = skClassName;
-    windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     windowClass.lpfnWndProc = callback;
-    windowClass.hInstance = LEPONG_THIS_MODULE;
+    windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    windowClass.lpszClassName = skClassName;
+    windowClass.hInstance = sModule;
     return RegisterClassW(&windowClass);
 }
 
@@ -42,7 +44,7 @@ void Cleanup() noexcept
 {
     if (sInitialized)
     {
-        UnregisterClassW(skClassName, LEPONG_THIS_MODULE);
+        UnregisterClassW(skClassName, sModule);
         sInitialized = false;
     }
 }
@@ -65,7 +67,7 @@ HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept
         CW_USEDEFAULT,
         nullptr,
         nullptr,
-        LEPONG_THIS_MODULE,
+        sModule,
         nullptr);
 }
 
