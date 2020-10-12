@@ -57,7 +57,8 @@ LEPONG_NODISCARD HWND MakeWindow(const Vector2i& size, const wchar_t* title) noe
 void DestroyWindow(HWND window) noexcept;
 
 ///
-/// Sets the provided window's resizable state.
+/// Sets the provided window's resizable state.<br>
+/// If the window is nullptr, this function does nothing.
 ///
 /// \param window The window the change the resizable state of.
 /// \param resizable Whether the window should be resizable.

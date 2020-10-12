@@ -6,6 +6,7 @@
 
 #include "lepong/Assert.h"
 #include "lepong/Attribute.h"
+#include "lepong/Log.h"
 #include "lepong/Window.h"
 
 #include "lepong/Graphics/Graphics.h"
@@ -46,8 +47,6 @@ public:
         : init(init)
         , cleanup(cleanup)
     {
-        LEPONG_ASSERT(init, "init must not be nullptr");
-        LEPONG_ASSERT(cleanup, "cleanup must not be nullptr");
     }
 };
 
@@ -148,6 +147,7 @@ void CleanupItemsStartingAt(ConstArrayReference<ItemLifetime, NumItems> itemLife
 ///
 static constexpr ItemLifetime kSystemLifetimes[] =
 {
+    { Log::Init, Log::Cleanup },
     { Window::Init, Window::Cleanup },
     { Graphics::Init, Graphics::Cleanup }
 };
@@ -207,7 +207,12 @@ bool InitWindow() noexcept
 {
     Window::SetKeyCallback(OnKeyEvent);
     sWindow = Window::MakeWindow(Vector2i{ 1280, 720 }, L"lepong");
-    return sWindow;
+
+    LEPONG_ASSERT_OR_RETURN(sWindow,
+        false,
+        "Failed to create window.");
+
+    return true;
 }
 
 void OnKeyEvent(int key, bool pressed) noexcept

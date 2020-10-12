@@ -12,6 +12,8 @@ namespace lepong::Graphics::Internal
 {
 
 ///
+/// If the graphics system is not initialized, this function returns nullptr.
+///
 /// \param name The name of the function to load.
 /// \return The function pointer corresponding to the provided function name.
 ///

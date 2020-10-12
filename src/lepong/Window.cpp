@@ -4,6 +4,7 @@
 
 #include "lepong/Assert.h"
 #include "lepong/Attribute.h"
+#include "lepong/Log.h"
 #include "lepong/Window.h"
 
 namespace lepong::Window
@@ -25,7 +26,12 @@ bool Init() noexcept
     }
 
     sInitialized = RegisterWindowClass();
-    return sInitialized;
+
+    LEPONG_ASSERT_OR_RETURN(sInitialized,
+        false,
+        "Failed to register class.");
+
+    return true;
 }
 
 ///
@@ -93,11 +99,12 @@ void SetKeyCallback(PFNKeyCallback callback) noexcept
 
 void Cleanup() noexcept
 {
-    if (sInitialized)
-    {
-        UnregisterClassW(skClassName, sModule);
-        sInitialized = false;
-    }
+    LEPONG_ASSERT_OR_RETURN(sInitialized,
+        /* void */,
+        "Window system not initialized.");
+
+    UnregisterClassW(skClassName, sModule);
+    sInitialized = false;
 }
 
 ///
@@ -108,10 +115,9 @@ LEPONG_NODISCARD static RECT CenterClientArea(const Vector2i& size) noexcept;
 
 HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept
 {
-    if (!sInitialized)
-    {
-        return nullptr;
-    }
+    LEPONG_ASSERT_OR_RETURN(sInitialized,
+        nullptr,
+        "MakeWindow called while the window system was not initialized.");
 
     const auto kArea = CenterClientArea(size);
 
@@ -178,7 +184,10 @@ Vector2i AdjustAreaSize(const Vector2i& size) noexcept
 
 void DestroyWindow(HWND window) noexcept
 {
-    LEPONG_ASSERT(window, "window can't be nullptr");
+    LEPONG_ASSERT_OR_RETURN(window,
+        /* void */,
+        "Window can't be nullptr.");
+
     ::DestroyWindow(window);
 }
 
@@ -194,13 +203,18 @@ LEPONG_NODISCARD static DWORD GetWindowStyle(HWND window) noexcept;
 
 void SetWindowResizable(HWND window, bool resizable) noexcept
 {
-    constexpr DWORD kResizableStyle = WS_MAXIMIZEBOX | WS_THICKFRAME; // NOLINT: PLEASE STOP.
-    const auto kStyle = GetWindowStyle(window);
+    LEPONG_ASSERT_OR_RETURN(window,
+        /* void */,
+        "Window can't be nullptr.");
 
-    SetWindowStyle(window,
-        resizable
-           ? kStyle | kResizableStyle
-           : kStyle ^ kResizableStyle);
+    constexpr DWORD kResizableStyle = WS_MAXIMIZEBOX | WS_THICKFRAME; // NOLINT: PLEASE STOP.
+    const auto kCurrentStyle = GetWindowStyle(window);
+
+    const auto kStyle = resizable
+        ? kCurrentStyle | kResizableStyle
+        : kCurrentStyle ^ kResizableStyle;
+
+    SetWindowStyle(window, kStyle);
 }
 
 void SetWindowStyle(HWND window, DWORD style) noexcept

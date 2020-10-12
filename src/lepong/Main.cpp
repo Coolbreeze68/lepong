@@ -6,7 +6,9 @@
 
 int main()
 {
-    if (lepong::Init())
+    const auto kCanRun = lepong::Init();
+
+    if (kCanRun)
     {
         lepong::Run();
         lepong::Cleanup();

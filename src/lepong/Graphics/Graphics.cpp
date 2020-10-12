@@ -11,31 +11,35 @@
 namespace lepong::Graphics
 {
 
-static bool sInitialized = false;
 static HMODULE sOpenGLLibrary = nullptr;
 
 bool Init() noexcept
 {
-    if (sInitialized)
+    if (sOpenGLLibrary)
     {
         return false;
     }
 
     sOpenGLLibrary = LoadLibraryA("OpenGL32.dll");
-    return sInitialized = sOpenGLLibrary;
+
+    LEPONG_ASSERT_OR_RETURN(sOpenGLLibrary,
+        false,
+        "Failed to load OpenGL");
+
+    return true;
 }
 
 bool IsInitialized() noexcept
 {
-    return sInitialized;
+    return sOpenGLLibrary;
 }
 
 void Cleanup() noexcept
 {
-    if (sInitialized)
+    if (sOpenGLLibrary)
     {
         FreeLibrary(sOpenGLLibrary);
-        sInitialized = false;
+        sOpenGLLibrary = nullptr;
     }
 }
 
@@ -44,7 +48,6 @@ namespace Internal
 
 PROC LoadOpenGLFunction(const char* name) noexcept
 {
-    LEPONG_ASSERT(sInitialized, "can't load if the graphics system is not initialized");
     const auto kFunction = wglGetProcAddress(name);
 
     if (!kFunction)

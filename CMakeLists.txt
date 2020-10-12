@@ -11,10 +11,12 @@ add_executable(lepong
     inc/lepong/Assert.h
     inc/lepong/Attribute.h
     inc/lepong/lepong.h
+    inc/lepong/Log.h
     inc/lepong/Window.h
     src/lepong/Graphics/Graphics.cpp
     src/lepong/Graphics/LoadOpenGLFunction.h
     src/lepong/lepong.cpp
+    src/lepong/Log.cpp
     src/lepong/Main.cpp
     src/lepong/Window.cpp)
 
