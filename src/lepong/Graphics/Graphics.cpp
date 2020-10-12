@@ -6,8 +6,6 @@
 
 #include "LoadOpenGLFunction.h"
 
-#include "lepong/Assert.h"
-
 namespace lepong::Graphics
 {
 
@@ -21,12 +19,7 @@ bool Init() noexcept
     }
 
     sOpenGLLibrary = LoadLibraryA("OpenGL32.dll");
-
-    LEPONG_ASSERT_OR_RETURN(sOpenGLLibrary,
-        false,
-        "Failed to load OpenGL");
-
-    return true;
+    return sOpenGLLibrary;
 }
 
 bool IsInitialized() noexcept

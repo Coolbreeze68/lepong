@@ -4,7 +4,6 @@
 
 #include <cstdint>
 
-#include "lepong/Assert.h"
 #include "lepong/Attribute.h"
 #include "lepong/Log.h"
 #include "lepong/Window.h"
@@ -207,12 +206,7 @@ bool InitWindow() noexcept
 {
     Window::SetKeyCallback(OnKeyEvent);
     sWindow = Window::MakeWindow(Vector2i{ 1280, 720 }, L"lepong");
-
-    LEPONG_ASSERT_OR_RETURN(sWindow,
-        false,
-        "Failed to create window.");
-
-    return true;
+    return sWindow;
 }
 
 void OnKeyEvent(int key, bool pressed) noexcept

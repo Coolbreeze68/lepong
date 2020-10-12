@@ -4,7 +4,7 @@
 
 #include <cstdio>
 
-#include "lepong/Assert.h"
+#include "lepong/Log.h"
 
 namespace lepong::Log
 {
@@ -40,14 +40,10 @@ void Cleanup() noexcept
 
 void Log(const char* message) noexcept
 {
-    if (sLog)
+    if (sLog && message)
     {
-        LEPONG_ASSERT_OR_RETURN(message,
-            /* void */,
-            "Message can't be nullptr.");
-
         fputs(message, sLog);
-        fputc(   '\n', sLog);
+        fputc('\n', sLog);
     }
 }
 

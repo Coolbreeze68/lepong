@@ -2,7 +2,6 @@
 // Created by lepouki on 10/12/2020.
 //
 
-#include "lepong/Assert.h"
 #include "lepong/Attribute.h"
 #include "lepong/Log.h"
 #include "lepong/Window.h"
@@ -26,12 +25,7 @@ bool Init() noexcept
     }
 
     sInitialized = RegisterWindowClass();
-
-    LEPONG_ASSERT_OR_RETURN(sInitialized,
-        false,
-        "Failed to register class.");
-
-    return true;
+    return sInitialized;
 }
 
 ///
@@ -99,12 +93,11 @@ void SetKeyCallback(PFNKeyCallback callback) noexcept
 
 void Cleanup() noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(sInitialized,
-        /* void */,
-        "Window system not initialized.");
-
-    UnregisterClassW(skClassName, sModule);
-    sInitialized = false;
+    if (sInitialized)
+    {
+        UnregisterClassW(skClassName, sModule);
+        sInitialized = false;
+    }
 }
 
 ///
@@ -115,9 +108,10 @@ LEPONG_NODISCARD static RECT CenterClientArea(const Vector2i& size) noexcept;
 
 HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(sInitialized,
-        nullptr,
-        "MakeWindow called while the window system was not initialized.");
+    if (!sInitialized)
+    {
+        return nullptr;
+    }
 
     const auto kArea = CenterClientArea(size);
 
@@ -128,13 +122,13 @@ HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept
     };
 
     return CreateWindowExW(
-        WS_EX_APPWINDOW,
-        skClassName, title,
+        WS_EX_APPWINDOW, skClassName,
+        title,
         WS_OVERLAPPEDWINDOW, // NOLINT: Clang-Tidy needs to chill the FUCK down.
         kArea.left, kArea.top,
         kSize.x, kSize.y,
-        nullptr, nullptr,
-        sModule, nullptr);
+        nullptr, nullptr, sModule,
+        nullptr);
 }
 
 ///
@@ -184,11 +178,10 @@ Vector2i AdjustAreaSize(const Vector2i& size) noexcept
 
 void DestroyWindow(HWND window) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(window,
-        /* void */,
-        "Window can't be nullptr.");
-
-    ::DestroyWindow(window);
+    if (window)
+    {
+        ::DestroyWindow(window);
+    }
 }
 
 ///
@@ -203,9 +196,10 @@ LEPONG_NODISCARD static DWORD GetWindowStyle(HWND window) noexcept;
 
 void SetWindowResizable(HWND window, bool resizable) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(window,
-        /* void */,
-        "Window can't be nullptr.");
+    if (!window)
+    {
+        return;
+    }
 
     constexpr DWORD kResizableStyle = WS_MAXIMIZEBOX | WS_THICKFRAME; // NOLINT: PLEASE STOP.
     const auto kCurrentStyle = GetWindowStyle(window);
