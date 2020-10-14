@@ -210,4 +210,49 @@ DWORD GetWindowStyle(HWND window) noexcept
     return GetWindowLongW(window, GWL_STYLE);
 }
 
+///
+/// Sets the provided window's visible state.
+///
+static void SetWindowVisible(HWND window, bool visible) noexcept;
+
+void ShowWindow(HWND window) noexcept
+{
+    SetWindowVisible(window, true);
+}
+
+void SetWindowVisible(HWND window, bool visible) noexcept
+{
+    ShowWindow(window, visible ? SW_SHOW : SW_HIDE);
+}
+
+void HideWindow(HWND window) noexcept
+{
+    SetWindowVisible(window, false);
+}
+
+///
+/// Dispatches the provided message to the event callback.
+///
+static void Dispatch(const MSG& msg) noexcept;
+
+bool PollEvents() noexcept
+{
+    MSG msg = {};
+    auto keepRunning = true;
+
+    while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
+    {
+        Dispatch(msg);
+        keepRunning &= (msg.message != WM_QUIT);
+    }
+
+    return keepRunning;
+}
+
+void Dispatch(const MSG& msg) noexcept
+{
+    TranslateMessage(&msg);
+    DispatchMessageW(&msg);
+}
+
 } // namespace lepong::Window

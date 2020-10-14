@@ -244,51 +244,21 @@ void CleanupState() noexcept
 
 static auto sRunning = false;
 
-///
-/// \return Whether the game should keep running.
-///
-LEPONG_NODISCARD static bool PollEvents() noexcept;
-
 void Run() noexcept
 {
     LEPONG_ASSERT_OR_RETURN(sInitialized && !sRunning);
 
     sRunning = true;
 
-    ShowWindow(sWindow, SW_SHOW);
+    Window::ShowWindow(sWindow);
     Window::SetWindowResizable(sWindow, false);
 
     while (sRunning)
     {
-        sRunning = PollEvents();
+        sRunning = Window::PollEvents();
     }
 
-    ShowWindow(sWindow, SW_HIDE);
-}
-
-///
-/// Dispatches the provided message to the event callback.
-///
-static void Dispatch(const MSG& msg) noexcept;
-
-bool PollEvents() noexcept
-{
-    MSG msg = {};
-    auto keepRunning = true;
-
-    while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
-    {
-        Dispatch(msg);
-        keepRunning &= (msg.message != WM_QUIT);
-    }
-
-    return keepRunning;
-}
-
-void Dispatch(const MSG& msg) noexcept
-{
-    TranslateMessage(&msg);
-    DispatchMessageW(&msg);
+    Window::HideWindow(sWindow);
 }
 
 void Cleanup() noexcept

@@ -16,21 +16,13 @@ bool Init() noexcept
 {
     LEPONG_ASSERT_OR_RETURN_VAL(!sLog, false);
 
-    fopen_s(&sLog, "lepong.log", "w");
-
-    if (sLog)
-    {
-        Log("Log file begin.");
-    }
-
-    return sLog;
+    return !fopen_s(&sLog, "lepong.log", "w");
 }
 
 void Cleanup() noexcept
 {
     LEPONG_ASSERT_OR_RETURN(sLog);
 
-    Log("Log file end.");
     fclose(sLog);
     sLog = nullptr;
 }

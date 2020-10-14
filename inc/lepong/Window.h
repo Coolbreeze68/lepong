@@ -14,7 +14,7 @@ namespace lepong::Window
 {
 
 ///
-/// A key input callback.
+/// A key input callback.<br>
 ///
 using PFNKeyCallback = void (*)(int key, bool pressed);
 
@@ -64,5 +64,24 @@ void DestroyWindow(HWND window) noexcept;
 /// \param resizable Whether the window should be resizable.
 ///
 void SetWindowResizable(HWND window, bool resizable) noexcept;
+
+///
+/// \param window The window to show.
+///
+void ShowWindow(HWND window) noexcept;
+
+///
+/// Useful documentation Incorporated.
+///
+/// \param window The window to hide.
+///
+void HideWindow(HWND window) noexcept;
+
+///
+/// Polls all the events in the event queue.
+///
+/// \return Whether a quit message was received.
+///
+LEPONG_NODISCARD bool PollEvents() noexcept;
 
 } // namespace lepong::Window
