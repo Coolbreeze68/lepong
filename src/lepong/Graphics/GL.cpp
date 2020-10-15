@@ -110,7 +110,8 @@ void Cleanup() noexcept
 }
 
 ///
-/// Creates an advanced OpenGL context.
+/// Creates an advanced OpenGL context.<br>
+/// I love useful documentation.
 ///
 LEPONG_NODISCARD static HGLRC MakeAdvancedContext(HDC device) noexcept;
 
@@ -127,7 +128,7 @@ Context MakeContext(HWND window) noexcept
 }
 
 ///
-/// Sets the more advanced pixel format for the provided device.
+/// Sets a more advanced pixel format for the provided device.
 ///
 static void SetAdvancedPixelFormat(HDC device) noexcept;
 
