@@ -172,6 +172,11 @@ void MakeContextCurrent(const Context& context) noexcept
     wglMakeCurrent(context.device, context.context);
 }
 
+void SwapBuffers(const Context& context) noexcept
+{
+    wglSwapLayerBuffers(context.device, WGL_SWAP_MAIN_PLANE);
+}
+
 void DestroyContext(const Context& context) noexcept
 {
     wglDeleteContext(context.context);

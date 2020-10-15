@@ -48,11 +48,18 @@ LEPONG_NODISCARD Context MakeContext(HWND window) noexcept;
 void MakeContextCurrent(const Context& context) noexcept;
 
 ///
+/// Swaps the front and back buffers for the provided context.
+///
+void SwapBuffers(const Context& context) noexcept;
+
+///
 /// Destroys the provided context.<br>
 /// Hmm yes useful documentation me like.
 ///
 /// \param context The context to destroy.
 ///
 void DestroyContext(const Context& context) noexcept;
+
+// The following functions act as an OpenGL interface
 
 } // namespace lepong::Graphics::GL

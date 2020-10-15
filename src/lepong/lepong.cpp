@@ -288,6 +288,7 @@ void Run() noexcept
     while (sRunning)
     {
         sRunning = Window::PollEvents();
+        Graphics::GL::SwapBuffers(sContext);
     }
 
     Window::HideWindow(sWindow);
