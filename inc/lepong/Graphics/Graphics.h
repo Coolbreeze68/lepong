@@ -1,10 +1,10 @@
 //
-// Created by lepouki on 10/12/2020.
+// Created by lepouki on 10/15/2020.
 //
 
 #pragma once
 
-#include "Context.h"
+#include "GL.h"
 
 #include "lepong/Attribute.h"
 
@@ -18,11 +18,6 @@ namespace lepong::Graphics
 /// \return Whether the graphics system was successfully initialized.
 ///
 LEPONG_NODISCARD bool Init() noexcept;
-
-///
-/// \return Whether the graphics system is initialized.
-///
-LEPONG_NODISCARD bool IsInitialized() noexcept;
 
 ///
 /// Cleans up all resources used by the graphics system.<br>

@@ -1,22 +1,23 @@
 //
-// Created by lepouki on 10/12/2020.
+// Created by lepouki on 10/15/2020.
 //
 
 #pragma once
 
 #include <Windows.h>
 
-#include "lepong/Attribute.h"
-
-namespace lepong::Graphics::Internal
+namespace lepong::Graphics
 {
 
+using PFNwglChoosePixelFormatARB = BOOL (*)(HDC, const int*, const FLOAT*, UINT, int*, UINT*);
+using PFNwglCreateContextAttribsARB = BOOL (*)(HDC, HGLRC, const int*);
+
 ///
-/// If the graphics system is not initialized, this function returns nullptr.
+/// Returns a pointer to the provided OpenGL function.
 ///
 /// \param name The name of the function to load.
 /// \return The function pointer corresponding to the provided function name.
 ///
-LEPONG_NODISCARD PROC LoadOpenGLFunction(const char* name) noexcept;
+PROC LoadOpenGLFunction(const char* name) noexcept;
 
-} // namespace lepong::Graphics::Internal
+} // namespace lepong::Graphics

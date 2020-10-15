@@ -6,6 +6,7 @@
 
 #include "lepong/Assert.h"
 #include "lepong/Attribute.h"
+#include "lepong/lepong.h"
 #include "lepong/Log.h"
 #include "lepong/Window.h"
 
@@ -165,7 +166,8 @@ static constexpr ItemLifetime kSystemLifetimes[] =
 {
     { Window::Init, Window::Cleanup },
     { Log::Init, Log::Cleanup },
-    { Graphics::Init, Graphics::Cleanup }
+    { Graphics::Init, Graphics::Cleanup },
+    { Graphics::GL::Init, Graphics::GL::Cleanup }
 };
 
 bool InitGameSystems() noexcept

@@ -4,7 +4,7 @@ project(lepong)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(lepong
-    inc/lepong/Graphics/Context.h
+    inc/lepong/Graphics/GL.h
     inc/lepong/Graphics/Graphics.h
     inc/lepong/Math/Math.h
     inc/lepong/Math/Vector2.h
@@ -13,12 +13,13 @@ add_executable(lepong
     inc/lepong/lepong.h
     inc/lepong/Log.h
     inc/lepong/Window.h
+    src/lepong/Graphics/GL.cpp
     src/lepong/Graphics/Graphics.cpp
     src/lepong/Graphics/LoadOpenGLFunction.h
     src/lepong/lepong.cpp
     src/lepong/Log.cpp
     src/lepong/Main.cpp
-    src/lepong/Window.cpp inc/lepong/Assert.h)
+    src/lepong/Window.cpp)
 
 target_link_libraries(lepong User32 OpenGL32)
 target_include_directories(lepong PUBLIC inc PRIVATE src)

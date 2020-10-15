@@ -7,6 +7,7 @@
 #include "LoadOpenGLFunction.h"
 
 #include "lepong/Assert.h"
+#include "lepong/Graphics/Graphics.h"
 
 namespace lepong::Graphics
 {
@@ -21,11 +22,6 @@ bool Init() noexcept
     return sOpenGLLibrary;
 }
 
-bool IsInitialized() noexcept
-{
-    return sOpenGLLibrary;
-}
-
 void Cleanup() noexcept
 {
     LEPONG_ASSERT_OR_RETURN(sOpenGLLibrary);
@@ -33,9 +29,6 @@ void Cleanup() noexcept
     FreeLibrary(sOpenGLLibrary);
     sOpenGLLibrary = nullptr;
 }
-
-namespace Internal
-{
 
 PROC LoadOpenGLFunction(const char* name) noexcept
 {
@@ -50,7 +43,5 @@ PROC LoadOpenGLFunction(const char* name) noexcept
 
     return kFunction;
 }
-
-} // namespace Internal
 
 } // namespace lepong::Graphics
