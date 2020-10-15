@@ -7,6 +7,9 @@
 #define LEPONG_ATTRIBUTE(name) \
     [[name]]
 
+#define LEPONG_MAYBE_UNUSED \
+    LEPONG_ATTRIBUTE(maybe_unused)
+
 #define LEPONG_NODISCARD \
     LEPONG_ATTRIBUTE(nodiscard)
 

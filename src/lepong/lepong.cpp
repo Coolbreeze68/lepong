@@ -16,7 +16,9 @@ namespace lepong
 {
 
 static auto sInitialized = false;
+
 static HWND sWindow;
+static Graphics::GL::Context sContext;
 
 ///
 /// A class holding the init and cleanup functions of an item.<br>
@@ -203,11 +205,22 @@ LEPONG_NODISCARD static bool InitWindow() noexcept;
 static void CleanupWindow() noexcept;
 
 ///
+/// \return Whether the rendering context was successfully initialized.
+///
+LEPONG_NODISCARD static bool InitContext() noexcept;
+
+///
+/// Cleans up the rendering context.
+///
+static void CleanupContext() noexcept;
+
+///
 /// Contains the lifetimes of all the game state items.
 ///
 static constexpr ItemLifetime kStateLifetimes[] =
 {
-    { InitWindow, CleanupWindow }
+    { InitWindow, CleanupWindow },
+    { InitContext, CleanupContext }
 };
 
 bool InitState() noexcept
@@ -239,12 +252,28 @@ void CleanupWindow() noexcept
     Window::DestroyWindow(sWindow);
 }
 
+bool InitContext() noexcept
+{
+    sContext = Graphics::GL::MakeContext(sWindow);
+    return sContext.context;
+}
+
+void CleanupContext() noexcept
+{
+    Graphics::GL::DestroyContext(sContext);
+}
+
 void CleanupState() noexcept
 {
     CleanupItems(kStateLifetimes);
 }
 
 static auto sRunning = false;
+
+///
+/// Log the rendering context's specifications.
+///
+static void LogContextSpecifications() noexcept;
 
 void Run() noexcept
 {
@@ -255,12 +284,25 @@ void Run() noexcept
     Window::ShowWindow(sWindow);
     Window::SetWindowResizable(sWindow, false);
 
+    Graphics::GL::MakeContextCurrent(sContext);
+    LogContextSpecifications();
+
     while (sRunning)
     {
         sRunning = Window::PollEvents();
     }
 
     Window::HideWindow(sWindow);
+}
+
+#define LEPONG_LOG_GL_STRING(name) \
+    Log::Log(reinterpret_cast<const char*>(glGetString(name)))
+
+void LogContextSpecifications() noexcept
+{
+    LEPONG_LOG_GL_STRING(GL_RENDERER);
+    LEPONG_LOG_GL_STRING(GL_VENDOR);
+    LEPONG_LOG_GL_STRING(GL_VERSION);
 }
 
 void Cleanup() noexcept

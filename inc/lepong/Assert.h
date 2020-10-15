@@ -9,6 +9,3 @@
 
 #define LEPONG_ASSERT_OR_RETURN_VAL(cnd, val) \
     LEPONG_ASSERT_OR_RETURN(cnd) val
-
-#define LEPONG_ASSERT_OR_CLEANUP(cnd) \
-    if (cnd); else Cleanup()

@@ -9,8 +9,8 @@
 namespace lepong::Graphics
 {
 
-using PFNwglChoosePixelFormatARB = BOOL (*)(HDC, const int*, const FLOAT*, UINT, int*, UINT*);
-using PFNwglCreateContextAttribsARB = BOOL (*)(HDC, HGLRC, const int*);
+using PFNwglChoosePixelFormatARB = BOOL (WINAPI*)(HDC, const int*, const FLOAT*, UINT, int*, UINT*);
+using PFNwglCreateContextAttribsARB = HGLRC (WINAPI*)(HDC, HGLRC, const int*);
 
 ///
 /// Returns a pointer to the provided OpenGL function.
