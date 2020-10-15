@@ -35,7 +35,7 @@ LEPONG_NODISCARD bool Init() noexcept;
 void Cleanup() noexcept;
 
 ///
-/// Created an OpenGL context for the provided window with the latest version available.<br>
+/// Creates an OpenGL context for the provided window with the latest version available.<br>
 /// Not storing the returned context results in a memory leak.
 ///
 /// \return The newly created context.
@@ -48,7 +48,8 @@ LEPONG_NODISCARD Context MakeContext(HWND window) noexcept;
 void MakeContextCurrent(const Context& context) noexcept;
 
 ///
-/// Destroys the provided context.
+/// Destroys the provided context.<br>
+/// Hmm yes useful documentation me like.
 ///
 /// \param context The context to destroy.
 ///

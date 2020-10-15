@@ -21,10 +21,9 @@ static HWND sWindow;
 static Graphics::GL::Context sContext;
 
 ///
-/// A class holding the init and cleanup functions of an item.<br>
-/// The item could be anything as long as its init and cleanup functions use the correct signatures.
+/// A class holding the init and cleanup functions of any item.
 ///
-struct ItemLifetime
+class Lifetime
 {
 public:
     ///
@@ -42,7 +41,7 @@ public:
     ///
     /// Both init and cleanup functions must be provided.
     ///
-    constexpr ItemLifetime(PFNInit init, PFNCleanup cleanup) noexcept
+    constexpr Lifetime(PFNInit init, PFNCleanup cleanup) noexcept
         : mInit(init)
         , mCleanup(cleanup)
     {
@@ -95,7 +94,7 @@ static void CleanupState() noexcept;
 ///
 /// All the game's lifetimes.
 ///
-static constexpr ItemLifetime kGameLifetimes[] =
+static constexpr Lifetime kGameLifetimes[] =
 {
     { InitGameSystems, CleanupGameSystems },
     { InitState, CleanupState }
@@ -114,7 +113,7 @@ using ConstArrayReference = const T (&)[Size];
 /// \return Whether all the items have been successfully initialized.
 ///
 template<std::size_t NumItems>
-LEPONG_NODISCARD static bool TryInitItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept;
+LEPONG_NODISCARD static bool TryInitItems(ConstArrayReference<Lifetime, NumItems> lifetimes) noexcept;
 
 bool Init() noexcept
 {
@@ -131,20 +130,20 @@ bool Init() noexcept
 /// \param index The index of the first system to cleanup.
 ///
 template<std::size_t NumItems>
-static void CleanupItemsStartingAt(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes, unsigned index) noexcept;
+static void CleanupItemsStartingAt(ConstArrayReference<Lifetime, NumItems> lifetimes, unsigned index) noexcept;
 
 template<std::size_t NumItems>
-bool TryInitItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept
+bool TryInitItems(ConstArrayReference<Lifetime, NumItems> lifetimes) noexcept
 {
     auto succeeded = true;
 
     for (unsigned i = 0; succeeded && i < NumItems; ++i)
     {
-        succeeded = itemLifetimes[i].Init();
+        succeeded = lifetimes[i].Init();
 
         if (!succeeded)
         {
-            CleanupItemsStartingAt(itemLifetimes, i);
+            CleanupItemsStartingAt(lifetimes, i);
         }
     }
 
@@ -152,19 +151,18 @@ bool TryInitItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noe
 }
 
 template<std::size_t NumItems>
-void CleanupItemsStartingAt(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes, unsigned index) noexcept
+void CleanupItemsStartingAt(ConstArrayReference<Lifetime, NumItems> lifetimes, unsigned index) noexcept
 {
     for (auto i = static_cast<int>(index) - 1; i >= 0; --i)
     {
-        itemLifetimes[i].Cleanup();
+        lifetimes[i].Cleanup();
     }
 }
 
 ///
-/// All the system lifetimes.<br>
-/// A system has to be declared after all the systems it depends on.
+/// All the system lifetimes.
 ///
-static constexpr ItemLifetime kSystemLifetimes[] =
+static constexpr Lifetime kSystemLifetimes[] =
 {
     { Window::Init, Window::Cleanup },
     { Log::Init, Log::Cleanup },
@@ -181,7 +179,7 @@ bool InitGameSystems() noexcept
 /// Calls the cleanup function of all the provided item lifetimes.
 ///
 template<std::size_t NumItems>
-static void CleanupItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept;
+static void CleanupItems(ConstArrayReference<Lifetime, NumItems> itemLifetimes) noexcept;
 
 void CleanupGameSystems() noexcept
 {
@@ -189,7 +187,7 @@ void CleanupGameSystems() noexcept
 }
 
 template<std::size_t NumItems>
-void CleanupItems(ConstArrayReference<ItemLifetime, NumItems> itemLifetimes) noexcept
+void CleanupItems(ConstArrayReference<Lifetime, NumItems> itemLifetimes) noexcept
 {
     CleanupItemsStartingAt(itemLifetimes, NumItems);
 }
@@ -215,9 +213,9 @@ LEPONG_NODISCARD static bool InitContext() noexcept;
 static void CleanupContext() noexcept;
 
 ///
-/// Contains the lifetimes of all the game state items.
+/// All the game state lifetimes.
 ///
-static constexpr ItemLifetime kStateLifetimes[] =
+static constexpr Lifetime kStateLifetimes[] =
 {
     { InitWindow, CleanupWindow },
     { InitContext, CleanupContext }
@@ -271,7 +269,7 @@ void CleanupState() noexcept
 static auto sRunning = false;
 
 ///
-/// Pretty straight forward.
+/// Logs the current context's specifications.
 ///
 static void LogContextSpecifications() noexcept;
 
@@ -300,9 +298,9 @@ void Run() noexcept
 
 void LogContextSpecifications() noexcept
 {
-    LEPONG_LOG_GL_STRING(GL_RENDERER);
-    LEPONG_LOG_GL_STRING(GL_VENDOR);
     LEPONG_LOG_GL_STRING(GL_VERSION);
+    LEPONG_LOG_GL_STRING(GL_VENDOR);
+    LEPONG_LOG_GL_STRING(GL_RENDERER);
 }
 
 void Cleanup() noexcept
