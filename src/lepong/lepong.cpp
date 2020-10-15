@@ -271,7 +271,7 @@ void CleanupState() noexcept
 static auto sRunning = false;
 
 ///
-/// Log the rendering context's specifications.
+/// Pretty straight forward.
 ///
 static void LogContextSpecifications() noexcept;
 
