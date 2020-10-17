@@ -18,7 +18,7 @@ static bool sInitialized = false;
 ///
 /// Creates a dummy OpenGL context.
 ///
-LEPONG_NODISCARD static Context MakeDummyContext() noexcept;
+LEPONG_NODISCARD static Context MakeFakeContextForDummyWindow() noexcept;
 
 ///
 /// Load all the OpenGL functions required by the graphics system.
@@ -31,13 +31,13 @@ bool Init() noexcept
 {
     LEPONG_ASSERT_OR_RETURN_VAL(!sInitialized, false);
 
-    const auto kDummyContext = MakeDummyContext();
-    MakeContextCurrent(kDummyContext);
+    const auto kFakeContext = MakeFakeContextForDummyWindow();
+    MakeContextCurrent(kFakeContext);
 
     sInitialized = LoadRequiredOpenGLFunctions();
 
-    DestroyContext(kDummyContext);
-    Window::DestroyWindow(kDummyContext.targetWindow);
+    DestroyContext(kFakeContext);
+    Window::DestroyWindow(kFakeContext.targetWindow);
 
     return sInitialized;
 }
@@ -47,7 +47,7 @@ bool Init() noexcept
 ///
 static void SetDummyPixelFormat(HDC device) noexcept;
 
-Context MakeDummyContext() noexcept
+Context MakeFakeContextForDummyWindow() noexcept
 {
     const auto kDummyWindow = Window::MakeWindow(Vector2i{ 0, 0 }, L"");
     const auto kDC = GetDC(kDummyWindow);
@@ -68,7 +68,7 @@ void SetDummyPixelFormat(HDC device) noexcept
     {
         sizeof(kPixelFormat),
         1,
-        PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER, // NOLINT: Clang-Tidy Episode 57.
+        PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER, // NOLINT: Clang-Tidy, A Love Letter.
         PFD_TYPE_RGBA,
         32,
         0, 0, 0, 0, 0, 0,
@@ -88,6 +88,8 @@ void SetDummyPixelFormat(HDC device) noexcept
     SetPixelFormat(device, kFormatIndex, nullptr);
 }
 
+// OpenGL functions.
+
 #define LEPONG_DECL_OPENGL_FUNCTION(name) \
     static PFN##name name = nullptr
 
@@ -96,12 +98,24 @@ void SetDummyPixelFormat(HDC device) noexcept
 
 LEPONG_DECL_OPENGL_FUNCTION(wglChoosePixelFormatARB);
 LEPONG_DECL_OPENGL_FUNCTION(wglCreateContextAttribsARB);
+LEPONG_DECL_OPENGL_FUNCTION(glCreateShader);
+LEPONG_DECL_OPENGL_FUNCTION(glDeleteShader);
+LEPONG_DECL_OPENGL_FUNCTION(glShaderSource);
+LEPONG_DECL_OPENGL_FUNCTION(glCompileShader);
+LEPONG_DECL_OPENGL_FUNCTION(glGetShaderiv);
+LEPONG_DECL_OPENGL_FUNCTION(glGetShaderInfoLog);
 
 bool LoadRequiredOpenGLFunctions() noexcept
 {
     return
         LEPONG_LOAD_OPENGL_FUNCTION(wglChoosePixelFormatARB) &&
-        LEPONG_LOAD_OPENGL_FUNCTION(wglCreateContextAttribsARB);
+        LEPONG_LOAD_OPENGL_FUNCTION(wglCreateContextAttribsARB) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glCreateShader) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glDeleteShader) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glShaderSource) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glCompileShader) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glGetShaderiv) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glGetShaderInfoLog);
 }
 
 void Cleanup() noexcept
@@ -180,6 +194,38 @@ void SwapBuffers(const Context& context) noexcept
 void DestroyContext(const Context& context) noexcept
 {
     wglDeleteContext(context.context);
+}
+
+// OpenGL interface.
+
+GLuint CreateShader(GLenum shaderType) noexcept
+{
+    return glCreateShader(shaderType);
+}
+
+void DeleteShader(GLuint shader) noexcept
+{
+    glDeleteShader(shader);
+}
+
+void ShaderSource(GLuint shader, GLsizei count, const GLchar** string, const GLint* length) noexcept
+{
+    glShaderSource(shader, count, string, length);
+}
+
+void CompileShader(GLuint shader) noexcept
+{
+    glCompileShader(shader);
+}
+
+void GetShaderiv(GLuint shader, GLenum pname, GLint* params) noexcept
+{
+    glGetShaderiv(shader, pname, params);
+}
+
+void GetShaderInfoLog(GLuint shader, GLsizei maxLength, GLsizei* length, GLchar* infoLog) noexcept
+{
+    glGetShaderInfoLog(shader, maxLength, length, infoLog);
 }
 
 } // namespace lepong::Graphics::GL

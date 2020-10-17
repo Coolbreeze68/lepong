@@ -4,11 +4,14 @@
 
 #pragma once
 
-#include <Windows.h>
-
-#include <GL/GL.h>
+#include "GLInterface.h"
 
 #include "lepong/Attribute.h"
+#include "lepong/OS.h"
+
+LEPONG_DECL_WINDOWS_HANDLE(HWND);
+LEPONG_DECL_WINDOWS_HANDLE(HDC);
+LEPONG_DECL_WINDOWS_HANDLE(HGLRC);
 
 namespace lepong::Graphics::GL
 {
@@ -59,7 +62,5 @@ void SwapBuffers(const Context& context) noexcept;
 /// \param context The context to destroy.
 ///
 void DestroyContext(const Context& context) noexcept;
-
-// The following functions act as an OpenGL interface
 
 } // namespace lepong::Graphics::GL

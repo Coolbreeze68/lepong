@@ -4,11 +4,12 @@
 
 #pragma once
 
-#include <Windows.h>
-
 #include "Attribute.h"
+#include "OS.h"
 
 #include "Math/Vector2.h"
+
+LEPONG_DECL_WINDOWS_HANDLE(HWND);
 
 namespace lepong::Window
 {

@@ -20,7 +20,7 @@ add_executable(lepong
     src/lepong/lepong.cpp
     src/lepong/Log.cpp
     src/lepong/Main.cpp
-    src/lepong/Window.cpp)
+    src/lepong/Window.cpp inc/lepong/Graphics/GLInterface.h inc/lepong/OS.h)
 
 target_link_libraries(lepong
     User32

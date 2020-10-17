@@ -2,6 +2,8 @@
 // Created by lepouki on 10/12/2020.
 //
 
+#include <Windows.h>
+
 #include "lepong/Assert.h"
 #include "lepong/Attribute.h"
 #include "lepong/Window.h"

@@ -4,6 +4,9 @@
 
 #include <cstdint>
 
+#include <Windows.h>
+#include <GL/GL.h> // For glGetString.
+
 #include "lepong/Assert.h"
 #include "lepong/Attribute.h"
 #include "lepong/lepong.h"
