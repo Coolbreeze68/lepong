@@ -5,7 +5,6 @@
 #pragma once
 
 #include "GLInterface.h"
-#include "Namespace.h"
 
 #include "lepong/Attribute.h"
 #include "lepong/OS.h"
@@ -71,5 +70,3 @@ void SwapBuffers(const Context& context) noexcept;
 void DestroyContext(const Context& context) noexcept;
 
 } // namespace lepong::Graphics::GL
-
-LEPONG_DECL_GL_NAMESPACE_ALIAS;

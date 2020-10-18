@@ -8,6 +8,8 @@
 
 #include "lepong/Attribute.h"
 
+namespace gl = lepong::Graphics::GL;
+
 namespace lepong::Graphics
 {
 

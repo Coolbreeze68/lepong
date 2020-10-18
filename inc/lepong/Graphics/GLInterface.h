@@ -11,8 +11,6 @@
 #include <Windows.h> // Needed by "GL.h".
 #include <GL/GL.h>
 
-#include "Namespace.h"
-
 using GLchar = char;
 using GLsizeiptr = std::uintptr_t;
 
@@ -143,5 +141,3 @@ void VertexAttribPointer(
     GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer) noexcept;
 
 } // namespace lepong::Graphics::GL
-
-LEPONG_DECL_GL_NAMESPACE_ALIAS;
