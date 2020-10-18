@@ -22,6 +22,12 @@ struct Context
     HWND targetWindow = nullptr;
     HDC device = nullptr;
     HGLRC context = nullptr;
+
+public:
+    LEPONG_NODISCARD constexpr bool IsValid() const noexcept
+    {
+        return targetWindow && device && context;
+    }
 };
 
 ///

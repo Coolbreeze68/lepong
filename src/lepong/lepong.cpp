@@ -256,7 +256,7 @@ void CleanupWindow() noexcept
 bool InitContext() noexcept
 {
     sContext = gl::MakeContext(sWindow);
-    return sContext.context;
+    return sContext.IsValid();
 }
 
 void CleanupContext() noexcept
