@@ -16,7 +16,8 @@ namespace lepong::Graphics::GL
 static bool sInitialized = false;
 
 ///
-/// Creates a dummy OpenGL context.
+/// Creates a dummy OpenGL context.<br>
+/// This function creates a dummy window which has to be destroyed.
 ///
 LEPONG_NODISCARD static Context MakeFakeContextForDummyWindow() noexcept;
 
