@@ -16,8 +16,7 @@ namespace lepong::Graphics::GL
 static bool sInitialized = false;
 
 ///
-/// Creates a dummy OpenGL context.<br>
-/// This function creates a dummy window which has to be destroyed.
+/// Creates a dummy OpenGL context.
 ///
 LEPONG_NODISCARD static Context MakeFakeContextForDummyWindow() noexcept;
 
@@ -28,17 +27,20 @@ LEPONG_NODISCARD static Context MakeFakeContextForDummyWindow() noexcept;
 ///
 LEPONG_NODISCARD static bool LoadRequiredOpenGLFunctions() noexcept;
 
+///
+/// Can you guess what this function does?
+///
+static void DestroyDummyContext(const Context& context) noexcept;
+
 bool Init() noexcept
 {
     LEPONG_ASSERT_OR_RETURN_VAL(!sInitialized, false);
 
-    const auto kFakeContext = MakeFakeContextForDummyWindow();
-    MakeContextCurrent(kFakeContext);
+    const auto kContext = MakeFakeContextForDummyWindow();
+    MakeContextCurrent(kContext);
 
     sInitialized = LoadRequiredOpenGLFunctions();
-
-    DestroyContext(kFakeContext);
-    Window::DestroyWindow(kFakeContext.targetWindow);
+    DestroyDummyContext(kContext);
 
     return sInitialized;
 }
@@ -149,6 +151,12 @@ bool LoadRequiredOpenGLFunctions() noexcept
         LEPONG_LOAD_OPENGL_FUNCTION(glBufferData) &&
         LEPONG_LOAD_OPENGL_FUNCTION(glEnableVertexAttribArray) &&
         LEPONG_LOAD_OPENGL_FUNCTION(glVertexAttribPointer);
+}
+
+void DestroyDummyContext(const Context& context) noexcept
+{
+    DestroyContext(context);
+    Window::DestroyWindow(context.targetWindow);
 }
 
 void Cleanup() noexcept
