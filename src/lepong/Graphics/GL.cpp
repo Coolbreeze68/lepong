@@ -2,8 +2,6 @@
 // Created by lepouki on 10/15/2020.
 //
 
-#include <lepong/Graphics/GLInterface.h>
-
 #include "Extensions.h"
 #include "LoadOpenGLFunction.h"
 
