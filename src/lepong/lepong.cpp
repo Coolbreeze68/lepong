@@ -21,7 +21,7 @@ namespace lepong
 static auto sInitialized = false;
 
 static HWND sWindow;
-static Graphics::GL::Context sContext;
+static gl::Context sContext;
 
 ///
 /// A class holding the init and cleanup functions of any item.
@@ -170,7 +170,7 @@ static constexpr Lifetime kSystemLifetimes[] =
     { Window::Init, Window::Cleanup },
     { Log::Init, Log::Cleanup },
     { Graphics::Init, Graphics::Cleanup },
-    { Graphics::GL::Init, Graphics::GL::Cleanup }
+    { gl::Init, gl::Cleanup }
 };
 
 bool InitGameSystems() noexcept
@@ -255,13 +255,13 @@ void CleanupWindow() noexcept
 
 bool InitContext() noexcept
 {
-    sContext = Graphics::GL::MakeContext(sWindow);
+    sContext = gl::MakeContext(sWindow);
     return sContext.context;
 }
 
 void CleanupContext() noexcept
 {
-    Graphics::GL::DestroyContext(sContext);
+    gl::DestroyContext(sContext);
 }
 
 void CleanupState() noexcept
@@ -285,13 +285,13 @@ void Run() noexcept
     Window::ShowWindow(sWindow);
     Window::SetWindowResizable(sWindow, false);
 
-    Graphics::GL::MakeContextCurrent(sContext);
+    gl::MakeContextCurrent(sContext);
     LogContextSpecifications();
 
     while (sRunning)
     {
         sRunning = Window::PollEvents();
-        Graphics::GL::SwapBuffers(sContext);
+        gl::SwapBuffers(sContext);
     }
 
     Window::HideWindow(sWindow);

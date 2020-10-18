@@ -24,6 +24,22 @@ using PFNglShaderSource = void (*)(GLuint, GLsizei, const GLchar**, const GLint*
 using PFNglCompileShader = void (*)(GLuint);
 using PFNglGetShaderiv = void (*)(GLuint, GLenum, GLint*);
 using PFNglGetShaderInfoLog = void (*)(GLuint, GLsizei, GLsizei*, GLchar*);
+using PFNglCreateProgram = GLuint (*)();
+using PFNglDeleteProgram = void (*)(GLuint);
+using PFNglAttachShader = void (*)(GLuint, GLuint);
+using PFNglLinkProgram = void (*)(GLuint);
+using PFNglGetProgramiv = void (*)(GLuint, GLenum, GLint*);
+using PFNglGetProgramInfoLog = void (*)(GLuint, GLsizei, GLsizei*, GLchar*);
+using PFNglUseProgram = void (*)(GLuint);
+using PFNglGenVertexArrays = void (*)(GLsizei, GLuint*);
+using PFNglDeleteVertexArrays = void (*)(GLsizei, const GLuint*);
+using PFNglBindVertexArray = void (*)(GLuint);
+using PFNglGenBuffers = void (*)(GLsizei, GLuint*);
+using PFNglDeleteBuffers = void (*)(GLsizei, const GLuint*);
+using PFNglBindBuffer = void (*)(GLenum, GLuint);
+using PFNglBufferData = void (*)(GLenum, GLsizeiptr, const void*, GLenum);
+using PFNglEnableVertexAttribArray = void (*)(GLuint);
+using PFNglVertexAttribPointer = void (*)(GLuint, GLint, GLenum, GLboolean, GLsizei, const void*);
 
 ///
 /// Returns a pointer to the provided OpenGL function.

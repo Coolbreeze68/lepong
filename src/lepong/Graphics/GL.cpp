@@ -2,6 +2,8 @@
 // Created by lepouki on 10/15/2020.
 //
 
+#include <lepong/Graphics/GLInterface.h>
+
 #include "Extensions.h"
 #include "LoadOpenGLFunction.h"
 
@@ -104,6 +106,22 @@ LEPONG_DECL_OPENGL_FUNCTION(glShaderSource);
 LEPONG_DECL_OPENGL_FUNCTION(glCompileShader);
 LEPONG_DECL_OPENGL_FUNCTION(glGetShaderiv);
 LEPONG_DECL_OPENGL_FUNCTION(glGetShaderInfoLog);
+LEPONG_DECL_OPENGL_FUNCTION(glCreateProgram);
+LEPONG_DECL_OPENGL_FUNCTION(glDeleteProgram);
+LEPONG_DECL_OPENGL_FUNCTION(glAttachShader);
+LEPONG_DECL_OPENGL_FUNCTION(glLinkProgram);
+LEPONG_DECL_OPENGL_FUNCTION(glGetProgramiv);
+LEPONG_DECL_OPENGL_FUNCTION(glGetProgramInfoLog);
+LEPONG_DECL_OPENGL_FUNCTION(glUseProgram);
+LEPONG_DECL_OPENGL_FUNCTION(glGenVertexArrays);
+LEPONG_DECL_OPENGL_FUNCTION(glDeleteVertexArrays);
+LEPONG_DECL_OPENGL_FUNCTION(glBindVertexArray);
+LEPONG_DECL_OPENGL_FUNCTION(glGenBuffers);
+LEPONG_DECL_OPENGL_FUNCTION(glDeleteBuffers);
+LEPONG_DECL_OPENGL_FUNCTION(glBindBuffer);
+LEPONG_DECL_OPENGL_FUNCTION(glBufferData);
+LEPONG_DECL_OPENGL_FUNCTION(glEnableVertexAttribArray);
+LEPONG_DECL_OPENGL_FUNCTION(glVertexAttribPointer);
 
 bool LoadRequiredOpenGLFunctions() noexcept
 {
@@ -115,7 +133,23 @@ bool LoadRequiredOpenGLFunctions() noexcept
         LEPONG_LOAD_OPENGL_FUNCTION(glShaderSource) &&
         LEPONG_LOAD_OPENGL_FUNCTION(glCompileShader) &&
         LEPONG_LOAD_OPENGL_FUNCTION(glGetShaderiv) &&
-        LEPONG_LOAD_OPENGL_FUNCTION(glGetShaderInfoLog);
+        LEPONG_LOAD_OPENGL_FUNCTION(glGetShaderInfoLog) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glCreateProgram) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glDeleteProgram) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glAttachShader) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glLinkProgram) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glGetProgramiv) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glGetProgramInfoLog) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glUseProgram) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glGenVertexArrays) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glDeleteVertexArrays) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glBindVertexArray) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glGenBuffers) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glDeleteBuffers) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glBindBuffer) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glBufferData) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glEnableVertexAttribArray) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glVertexAttribPointer);
 }
 
 void Cleanup() noexcept
@@ -226,6 +260,87 @@ void GetShaderiv(GLuint shader, GLenum pname, GLint* params) noexcept
 void GetShaderInfoLog(GLuint shader, GLsizei maxLength, GLsizei* length, GLchar* infoLog) noexcept
 {
     glGetShaderInfoLog(shader, maxLength, length, infoLog);
+}
+
+GLuint CreateProgram() noexcept
+{
+    return glCreateProgram();
+}
+
+void DeleteProgram(GLuint program) noexcept
+{
+    glDeleteProgram(program);
+}
+
+void AttachShader(GLuint program, GLuint shader) noexcept
+{
+    glAttachShader(program, shader);
+}
+
+void LinkProgram(GLuint program) noexcept
+{
+    glLinkProgram(program);
+}
+
+void GetProgramiv(GLuint program, GLenum pname, GLint* params) noexcept
+{
+    glGetProgramiv(program, pname, params);
+}
+
+void GetProgramInfoLog(GLuint program, GLsizei maxLength, GLsizei* length, GLchar* infoLog) noexcept
+{
+    glGetProgramInfoLog(program, maxLength, length, infoLog);
+}
+
+void UseProgram(GLuint program) noexcept
+{
+    glUseProgram(program);
+}
+
+void GenVertexArrays(GLsizei n, GLuint* arrays) noexcept
+{
+    glGenVertexArrays(n, arrays);
+}
+
+void DeleteVertexArrays(GLsizei n, const GLuint* arrays) noexcept
+{
+    glDeleteVertexArrays(n, arrays);
+}
+
+void BindVertexArray(GLuint array) noexcept
+{
+    glBindVertexArray(array);
+}
+
+void GenBuffers(GLsizei n, GLuint* buffers) noexcept
+{
+    glGenBuffers(n, buffers);
+}
+
+void DeleteBuffers(GLsizei n, const GLuint* buffers) noexcept
+{
+    glDeleteBuffers(n, buffers);
+}
+
+void BindBuffer(GLenum target, GLuint buffer) noexcept
+{
+    glBindBuffer(target, buffer);
+}
+
+void BufferData(GLenum target, GLsizeiptr size, const void* data, GLenum usage) noexcept
+{
+    glBufferData(target, size, data, usage);
+}
+
+void EnableVertexAttribArray(GLuint index) noexcept
+{
+    glEnableVertexAttribArray(index);
+}
+
+void VertexAttribPointer(
+    GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer) noexcept
+{
+    glVertexAttribPointer(index, size, type, normalized, stride, pointer);
 }
 
 } // namespace lepong::Graphics::GL
