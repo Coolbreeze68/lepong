@@ -18,7 +18,7 @@ static bool sInitialized = false;
 ///
 /// Creates a dummy OpenGL context.
 ///
-LEPONG_NODISCARD static Context MakeFakeContextForDummyWindow() noexcept;
+LEPONG_NODISCARD static Context MakeDummyContext() noexcept;
 
 ///
 /// Load all the OpenGL functions required by the graphics system.
@@ -36,7 +36,7 @@ bool Init() noexcept
 {
     LEPONG_ASSERT_OR_RETURN_VAL(!sInitialized, false);
 
-    const auto kContext = MakeFakeContextForDummyWindow();
+    const auto kContext = MakeDummyContext();
     MakeContextCurrent(kContext);
 
     sInitialized = LoadRequiredOpenGLFunctions();
@@ -50,7 +50,7 @@ bool Init() noexcept
 ///
 static void SetDummyPixelFormat(HDC device) noexcept;
 
-Context MakeFakeContextForDummyWindow() noexcept
+Context MakeDummyContext() noexcept
 {
     const auto kDummyWindow = Window::MakeWindow(Vector2i{ 0, 0 }, L"");
     const auto kDC = GetDC(kDummyWindow);
@@ -239,6 +239,11 @@ void DestroyContext(const Context& context) noexcept
 
 // OpenGL interface.
 
+const GLubyte* GetString(GLenum name) noexcept
+{
+    return glGetString(name);
+}
+
 GLuint CreateShader(GLenum shaderType) noexcept
 {
     return glCreateShader(shaderType);
@@ -348,6 +353,16 @@ void VertexAttribPointer(
     GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer) noexcept
 {
     glVertexAttribPointer(index, size, type, normalized, stride, pointer);
+}
+
+void DrawArrays(GLenum mode, GLint first, GLsizei count) noexcept
+{
+    glDrawArrays(mode, first, count);
+}
+
+void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) noexcept
+{
+    glDrawElements(mode, count, type, indices);
 }
 
 } // namespace lepong::Graphics::GL

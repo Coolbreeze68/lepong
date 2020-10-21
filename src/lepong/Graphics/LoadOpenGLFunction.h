@@ -18,28 +18,28 @@ using PFNwglCreateContextAttribsARB = HGLRC (WINAPI*)(HDC, HGLRC, const int*);
 
 // OpenGL extensions.
 
-using PFNglCreateShader = GLuint (*)(GLenum);
-using PFNglDeleteShader = void (*)(GLuint);
-using PFNglShaderSource = void (*)(GLuint, GLsizei, const GLchar**, const GLint*);
-using PFNglCompileShader = void (*)(GLuint);
-using PFNglGetShaderiv = void (*)(GLuint, GLenum, GLint*);
-using PFNglGetShaderInfoLog = void (*)(GLuint, GLsizei, GLsizei*, GLchar*);
-using PFNglCreateProgram = GLuint (*)();
-using PFNglDeleteProgram = void (*)(GLuint);
-using PFNglAttachShader = void (*)(GLuint, GLuint);
-using PFNglLinkProgram = void (*)(GLuint);
-using PFNglGetProgramiv = void (*)(GLuint, GLenum, GLint*);
-using PFNglGetProgramInfoLog = void (*)(GLuint, GLsizei, GLsizei*, GLchar*);
-using PFNglUseProgram = void (*)(GLuint);
-using PFNglGenVertexArrays = void (*)(GLsizei, GLuint*);
-using PFNglDeleteVertexArrays = void (*)(GLsizei, const GLuint*);
-using PFNglBindVertexArray = void (*)(GLuint);
-using PFNglGenBuffers = void (*)(GLsizei, GLuint*);
-using PFNglDeleteBuffers = void (*)(GLsizei, const GLuint*);
-using PFNglBindBuffer = void (*)(GLenum, GLuint);
-using PFNglBufferData = void (*)(GLenum, GLsizeiptr, const void*, GLenum);
-using PFNglEnableVertexAttribArray = void (*)(GLuint);
-using PFNglVertexAttribPointer = void (*)(GLuint, GLint, GLenum, GLboolean, GLsizei, const void*);
+using PFNglCreateShader = GLuint (WINAPI*)(GLenum);
+using PFNglDeleteShader = void (WINAPI*)(GLuint);
+using PFNglShaderSource = void (WINAPI*)(GLuint, GLsizei, const GLchar**, const GLint*);
+using PFNglCompileShader = void (WINAPI*)(GLuint);
+using PFNglGetShaderiv = void (WINAPI*)(GLuint, GLenum, GLint*);
+using PFNglGetShaderInfoLog = void (WINAPI*)(GLuint, GLsizei, GLsizei*, GLchar*);
+using PFNglCreateProgram = GLuint (WINAPI*)();
+using PFNglDeleteProgram = void (WINAPI*)(GLuint);
+using PFNglAttachShader = void (WINAPI*)(GLuint, GLuint);
+using PFNglLinkProgram = void (WINAPI*)(GLuint);
+using PFNglGetProgramiv = void (WINAPI*)(GLuint, GLenum, GLint*);
+using PFNglGetProgramInfoLog = void (WINAPI*)(GLuint, GLsizei, GLsizei*, GLchar*);
+using PFNglUseProgram = void (WINAPI*)(GLuint);
+using PFNglGenVertexArrays = void (WINAPI*)(GLsizei, GLuint*);
+using PFNglDeleteVertexArrays = void (WINAPI*)(GLsizei, const GLuint*);
+using PFNglBindVertexArray = void (WINAPI*)(GLuint);
+using PFNglGenBuffers = void (WINAPI*)(GLsizei, GLuint*);
+using PFNglDeleteBuffers = void (WINAPI*)(GLsizei, const GLuint*);
+using PFNglBindBuffer = void (WINAPI*)(GLenum, GLuint);
+using PFNglBufferData = void (WINAPI*)(GLenum, GLsizeiptr, const void*, GLenum);
+using PFNglEnableVertexAttribArray = void (WINAPI*)(GLuint);
+using PFNglVertexAttribPointer = void (WINAPI*)(GLuint, GLint, GLenum, GLboolean, GLsizei, const void*);
 
 ///
 /// Returns a pointer to the provided OpenGL function.

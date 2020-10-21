@@ -11,6 +11,8 @@
 #include <Windows.h> // Needed by "GL.h".
 #include <GL/GL.h>
 
+#include "lepong/Attribute.h"
+
 using GLchar = char;
 using GLsizeiptr = std::uintptr_t;
 
@@ -21,18 +23,27 @@ enum : GLenum
 {
     False              = 0,
     Float              = 0x1406,
+    Vendor             = 0x1F00,
+    Renderer           = 0x1F01,
+    Version            = 0x1F02,
     ArrayBuffer        = 0x8892,
     ElementArrayBuffer = 0x8893,
     FragmentShader     = 0x8B30,
     VertexShader       = 0x8B31,
     CompileStatus      = 0x8B81,
-    LinkStatus         = 0x8B82
+    LinkStatus         = 0x8B82,
+    InfoLogLength      = 0x8B84
 };
+
+///
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetString.xhtml
+///
+LEPONG_NODISCARD const GLubyte* GetString(GLenum name) noexcept;
 
 ///
 /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glCreateShader.xhtml
 ///
-GLuint CreateShader(GLenum shaderType) noexcept;
+LEPONG_NODISCARD GLuint CreateShader(GLenum shaderType) noexcept;
 
 ///
 /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDeleteShader.xhtml
@@ -62,7 +73,7 @@ void GetShaderInfoLog(GLuint shader, GLsizei maxLength, GLsizei* length, GLchar*
 ///
 /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glCreateProgram.xhtml
 ///
-GLuint CreateProgram() noexcept;
+LEPONG_NODISCARD GLuint CreateProgram() noexcept;
 
 ///
 /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDeleteProgram.xhtml
@@ -139,5 +150,15 @@ void EnableVertexAttribArray(GLuint index) noexcept;
 ///
 void VertexAttribPointer(
     GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer) noexcept;
+
+///
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDrawArrays.xhtml
+///
+void DrawArrays(GLenum mode, GLint first, GLsizei count) noexcept;
+
+///
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDrawElements.xhtml
+///
+void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) noexcept;
 
 } // namespace lepong::Graphics::GL

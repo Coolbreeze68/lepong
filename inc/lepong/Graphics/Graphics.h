@@ -27,4 +27,23 @@ LEPONG_NODISCARD bool Init() noexcept;
 ///
 void Cleanup() noexcept;
 
+///
+/// Creates a shader using the provided source code.<br>
+///
+/// If <i>type</i> is not <code>gl::VertexShader</code> or <code>gl::FragmentShader</code> or if <i>source</i> is
+/// <code>nullptr</code>, the return value is 0.<br>
+///
+/// If compilation fails, the return value is 0 and the error is automatically logged.
+///
+LEPONG_NODISCARD GLuint CreateShaderFromSource(GLenum type, const char* source) noexcept;
+
+///
+/// Creates a program using the provided vertex and fragment shaders.<br>
+/// This function does not check if the provided shaders are valid vertex and fragment shaders.<br>
+///
+/// If the shaders are 0, the return value is 0.<br>
+/// If linking fails, the return value is 0 and the error is automatically logged.
+///
+LEPONG_NODISCARD GLuint CreateProgramFromShaders(GLuint vertex, GLuint fragment) noexcept;
+
 } // namespace lepong::Graphics

@@ -4,9 +4,6 @@
 
 #include <cstdint>
 
-#include <Windows.h>
-#include <GL/GL.h> // For glGetString.
-
 #include "lepong/Assert.h"
 #include "lepong/Attribute.h"
 #include "lepong/lepong.h"
@@ -22,6 +19,9 @@ static auto sInitialized = false;
 
 static HWND sWindow;
 static gl::Context sContext;
+
+static GLuint sTriangleProgram;
+static GLuint sTriangleVB;
 
 ///
 /// A class holding the init and cleanup functions of any item.
@@ -216,12 +216,23 @@ LEPONG_NODISCARD static bool InitContext() noexcept;
 static void CleanupContext() noexcept;
 
 ///
+/// \return Whether the graphics resources were successfully initialized.
+///
+LEPONG_NODISCARD static bool InitGraphicsResources() noexcept;
+
+///
+/// Cleans up the graphics resources.
+///
+static void CleanupGraphicsResources() noexcept;
+
+///
 /// All the game state lifetimes.
 ///
 static constexpr Lifetime kStateLifetimes[] =
 {
     { InitWindow, CleanupWindow },
-    { InitContext, CleanupContext }
+    { InitContext, CleanupContext },
+    { InitGraphicsResources, CleanupGraphicsResources },
 };
 
 bool InitState() noexcept
@@ -256,12 +267,119 @@ void CleanupWindow() noexcept
 bool InitContext() noexcept
 {
     sContext = gl::MakeContext(sWindow);
-    return sContext.IsValid();
+    const auto kValid = sContext.IsValid();
+
+    if (kValid)
+    {
+        gl::MakeContextCurrent(sContext);
+    }
+
+    return kValid;
 }
 
 void CleanupContext() noexcept
 {
     gl::DestroyContext(sContext);
+}
+
+///
+/// \return Can you guess?
+///
+LEPONG_NODISCARD static bool InitTriangleProgram() noexcept;
+
+///
+/// You guessed it.
+///
+static void CleanupTriangleProgram() noexcept;
+
+///
+/// All the graphics resource lifetimes.
+///
+static constexpr Lifetime kGraphicsResourceLifetimes[] =
+{
+    { InitTriangleProgram, CleanupTriangleProgram }
+};
+
+bool InitGraphicsResources() noexcept
+{
+    return TryInitItems(kGraphicsResourceLifetimes);
+}
+
+///
+/// \return The triangle vertex shader.
+///
+static GLuint CreateTriangleVertShader() noexcept;
+
+///
+/// \return The triangle fragment shader. Unbelievable.
+///
+static GLuint CreateTriangleFragShader() noexcept;
+
+bool InitTriangleProgram() noexcept
+{
+    const auto kVert = CreateTriangleVertShader();
+    const auto kFrag = CreateTriangleFragShader();
+
+    sTriangleProgram = Graphics::CreateProgramFromShaders(kVert, kFrag);
+
+    gl::DeleteShader(kVert);
+    gl::DeleteShader(kFrag);
+
+    return sTriangleProgram;
+}
+
+GLuint CreateTriangleVertShader() noexcept
+{
+    constexpr auto kSource =
+    R"(
+
+    #version 330 core
+
+    layout (location = 0) in vec2 aPosition;
+    layout (location = 1) in vec3 aColor;
+
+    out vec3 vColor;
+
+    void main()
+    {
+        gl_Position = vec4(aPosition, 0.0, 1.0);
+        vColor = aColor;
+    }
+
+    )";
+
+    return Graphics::CreateShaderFromSource(gl::VertexShader, kSource);
+}
+
+GLuint CreateTriangleFragShader() noexcept
+{
+    constexpr auto kSource =
+    R"(
+
+    #version 330 core
+
+    in vec3 vColor;
+
+    out vec4 FragColor;
+
+    void main()
+    {
+        FragColor = vec4(vColor, 1.0);
+    }
+
+    )";
+
+    return Graphics::CreateShaderFromSource(gl::FragmentShader, kSource);
+}
+
+void CleanupTriangleProgram() noexcept
+{
+    gl::DeleteProgram(sTriangleProgram);
+}
+
+void CleanupGraphicsResources() noexcept
+{
+    CleanupItems(kGraphicsResourceLifetimes);
 }
 
 void CleanupState() noexcept
@@ -285,7 +403,6 @@ void Run() noexcept
     Window::ShowWindow(sWindow);
     Window::SetWindowResizable(sWindow, false);
 
-    gl::MakeContextCurrent(sContext);
     LogContextSpecifications();
 
     while (sRunning)
@@ -298,13 +415,13 @@ void Run() noexcept
 }
 
 #define LEPONG_LOG_GL_STRING(name) \
-    Log::Log(reinterpret_cast<const char*>(glGetString(name)))
+    Log::Log(reinterpret_cast<const char*>(gl::GetString(name)))
 
 void LogContextSpecifications() noexcept
 {
-    LEPONG_LOG_GL_STRING(GL_VERSION);
-    LEPONG_LOG_GL_STRING(GL_VENDOR);
-    LEPONG_LOG_GL_STRING(GL_RENDERER);
+    LEPONG_LOG_GL_STRING(gl::Version);
+    LEPONG_LOG_GL_STRING(gl::Vendor);
+    LEPONG_LOG_GL_STRING(gl::Renderer);
 }
 
 void Cleanup() noexcept
