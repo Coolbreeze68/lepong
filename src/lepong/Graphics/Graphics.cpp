@@ -131,13 +131,13 @@ void LogProgramInfo(GLuint program) noexcept
     GLint infoLogLength = 0;
     gl::GetProgramiv(program, gl::InfoLogLength, &infoLogLength);
 
-    auto infoLog = std::make_unique<GLchar[]>(infoLogLength);
-    auto rawInfoLog = infoLog.get();
+    const auto kInfoLog = std::make_unique<GLchar[]>(infoLogLength);
+    const auto kInfoLogData = kInfoLog.get();
 
-    gl::GetProgramInfoLog(program, infoLogLength, nullptr, rawInfoLog);
+    gl::GetProgramInfoLog(program, infoLogLength, nullptr, kInfoLogData);
 
     Log::Log("Program link error:");
-    Log::Log(rawInfoLog);
+    Log::Log(kInfoLogData);
 }
 
 PROC LoadOpenGLFunction(const char* name) noexcept
