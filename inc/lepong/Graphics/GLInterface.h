@@ -36,11 +36,6 @@ enum : GLenum
 };
 
 ///
-/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetString.xhtml
-///
-LEPONG_NODISCARD const GLubyte* GetString(GLenum name) noexcept;
-
-///
 /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glCreateShader.xhtml
 ///
 LEPONG_NODISCARD GLuint CreateShader(GLenum shaderType) noexcept;
@@ -160,5 +155,10 @@ void DrawArrays(GLenum mode, GLint first, GLsizei count) noexcept;
 /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDrawElements.xhtml
 ///
 void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) noexcept;
+
+///
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetString.xhtml
+///
+LEPONG_NODISCARD const GLubyte* GetString(GLenum name) noexcept;
 
 } // namespace lepong::Graphics::GL
