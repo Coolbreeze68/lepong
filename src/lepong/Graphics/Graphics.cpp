@@ -165,11 +165,9 @@ PROC LoadOpenGLFunction(const char* name) noexcept
 {
     LEPONG_ASSERT_OR_RETURN_VAL(sOpenGLLibrary && name, nullptr);
 
-    const auto kFunction = wglGetProcAddress(name);
-
-    if (kFunction)
+    if (const auto kFn = wglGetProcAddress(name); kFn)
     {
-        return kFunction;
+        return kFn;
     }
 
     return GetProcAddress(sOpenGLLibrary, name);
