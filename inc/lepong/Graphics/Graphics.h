@@ -44,6 +44,6 @@ LEPONG_NODISCARD GLuint CreateShaderFromSource(GLenum type, const char* source) 
 /// If the shaders are 0, the return value is 0.<br>
 /// If linking fails, the return value is 0 and the error is automatically logged.
 ///
-LEPONG_NODISCARD GLuint CreateProgramFromShaders(GLuint vertex, GLuint fragment) noexcept;
+LEPONG_NODISCARD GLuint CreateProgramFromShaders(GLuint vert, GLuint frag) noexcept;
 
 } // namespace lepong::Graphics
