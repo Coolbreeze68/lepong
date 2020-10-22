@@ -122,7 +122,6 @@ LEPONG_DECL_OPENGL_FUNCTION(glDeleteBuffers);
 LEPONG_DECL_OPENGL_FUNCTION(glBindBuffer);
 LEPONG_DECL_OPENGL_FUNCTION(glBufferData);
 LEPONG_DECL_OPENGL_FUNCTION(glEnableVertexAttribArray);
-LEPONG_DECL_OPENGL_FUNCTION(glDisableVertexAttribArray);
 LEPONG_DECL_OPENGL_FUNCTION(glVertexAttribPointer);
 
 bool LoadRequiredOpenGLFunctions() noexcept
@@ -151,7 +150,6 @@ bool LoadRequiredOpenGLFunctions() noexcept
         LEPONG_LOAD_OPENGL_FUNCTION(glBindBuffer) &&
         LEPONG_LOAD_OPENGL_FUNCTION(glBufferData) &&
         LEPONG_LOAD_OPENGL_FUNCTION(glEnableVertexAttribArray) &&
-        LEPONG_LOAD_OPENGL_FUNCTION(glDisableVertexAttribArray) &&
         LEPONG_LOAD_OPENGL_FUNCTION(glVertexAttribPointer);
 }
 

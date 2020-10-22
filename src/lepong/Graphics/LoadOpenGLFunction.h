@@ -39,7 +39,6 @@ using PFNglDeleteBuffers = void (WINAPI*)(GLsizei, const GLuint*);
 using PFNglBindBuffer = void (WINAPI*)(GLenum, GLuint);
 using PFNglBufferData = void (WINAPI*)(GLenum, GLsizeiptr, const void*, GLenum);
 using PFNglEnableVertexAttribArray = void (WINAPI*)(GLuint);
-using PFNglDisableVertexAttribArray = void (WINAPI*)(GLuint);
 using PFNglVertexAttribPointer = void (WINAPI*)(GLuint, GLint, GLenum, GLboolean, GLsizei, const void*);
 
 ///
