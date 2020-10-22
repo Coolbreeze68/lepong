@@ -4,8 +4,6 @@
 
 #include <cstdint>
 
-#include <iostream> // Debug
-
 #include "lepong/Assert.h"
 #include "lepong/Attribute.h"
 #include "lepong/lepong.h"
