@@ -97,10 +97,10 @@ static void CleanupState() noexcept;
 /// All the game's lifetimes.
 ///
 static constexpr Lifetime kGameLifetimes[] =
-    {
-        {InitGameSystems, CleanupGameSystems},
-        {InitState,       CleanupState}
-    };
+{
+    { InitGameSystems, CleanupGameSystems },
+    { InitState, CleanupState }
+};
 
 ///
 /// A wrapper for the pretty ugly array reference syntax.
@@ -165,12 +165,12 @@ void CleanupItemsStartingAt(ConstArrayReference<Lifetime, NumItems> lifetimes, u
 /// All the system lifetimes.
 ///
 static constexpr Lifetime kSystemLifetimes[] =
-    {
-        {Window::Init,   Window::Cleanup},
-        {Log::Init,      Log::Cleanup},
-        {Graphics::Init, Graphics::Cleanup},
-        {gl::Init,       gl::Cleanup}
-    };
+{
+    { Window::Init, Window::Cleanup },
+    { Log::Init, Log::Cleanup },
+    { Graphics::Init, Graphics::Cleanup },
+    { gl::Init, gl::Cleanup }
+};
 
 bool InitGameSystems() noexcept
 {
@@ -228,11 +228,11 @@ static void CleanupGraphicsResources() noexcept;
 /// All the game state lifetimes.
 ///
 static constexpr Lifetime kStateLifetimes[] =
-    {
-        {InitGameWindow,        CleanupGameWindow},
-        {InitContext,           CleanupContext},
-        {InitGraphicsResources, CleanupGraphicsResources},
-    };
+{
+    { InitGameWindow, CleanupGameWindow },
+    { InitContext, CleanupContext },
+    { InitGraphicsResources, CleanupGraphicsResources },
+};
 
 bool InitState() noexcept
 {
@@ -252,10 +252,8 @@ bool InitGameWindow() noexcept
     return sWindow;
 }
 
-void OnKeyEvent(int key, bool pressed) noexcept
+void OnKeyEvent(LEPONG_MAYBE_UNUSED int key, LEPONG_MAYBE_UNUSED bool pressed) noexcept
 {
-    (void) key;
-    (void) pressed;
 }
 
 void CleanupGameWindow() noexcept
@@ -292,12 +290,23 @@ LEPONG_NODISCARD static bool InitTriangleProgram() noexcept;
 static void CleanupTriangleProgram() noexcept;
 
 ///
+/// \return I think you can guess.
+///
+LEPONG_NODISCARD static bool InitTriangleVB() noexcept;
+
+///
+/// You guessed it again.
+///
+static void CleanupTriangleVB() noexcept;
+
+///
 /// All the graphics resource lifetimes.
 ///
 static constexpr Lifetime kGraphicsResourceLifetimes[] =
-    {
-        {InitTriangleProgram, CleanupTriangleProgram}
-    };
+{
+    { InitTriangleProgram, CleanupTriangleProgram },
+    { InitTriangleVB, CleanupTriangleVB }
+};
 
 bool InitGraphicsResources() noexcept
 {
@@ -376,6 +385,52 @@ void CleanupTriangleProgram() noexcept
     gl::DeleteProgram(sTriangleProgram);
 }
 
+///
+/// Sends triangle data to the triangle vertex shader.
+///
+static void InitTriangleVertexData() noexcept;
+
+bool InitTriangleVB() noexcept
+{
+    gl::GenBuffers(1, &sTriangleVB);
+
+    if (sTriangleVB)
+    {
+        InitTriangleVertexData();
+    }
+
+    return sTriangleVB;
+}
+
+void InitTriangleVertexData() noexcept
+{
+    gl::BindBuffer(gl::ArrayBuffer, sTriangleVB);
+
+    constexpr GLfloat kVertices[] =
+    {
+        -0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
+         0.0f,  0.5f, 0.0f, 1.0f, 1.0f,
+         0.5f, -0.5f, 1.0f, 0.0f, 1.0f
+    };
+
+    gl::BufferData(gl::ArrayBuffer, sizeof(kVertices), kVertices, gl::StaticDraw);
+
+    const auto kStride = sizeof(GLfloat) * 5;
+
+    gl::EnableVertexAttribArray(0);
+    gl::VertexAttribPointer(0, 2, gl::Float, gl::False, kStride, nullptr);
+
+    const auto kOffset = reinterpret_cast<void*>(sizeof(GLfloat) * 2);
+
+    gl::EnableVertexAttribArray(1);
+    gl::VertexAttribPointer(1, 3, gl::Float, gl::False, kStride, kOffset);
+}
+
+void CleanupTriangleVB() noexcept
+{
+    gl::DeleteBuffers(1, &sTriangleVB);
+}
+
 void CleanupGraphicsResources() noexcept
 {
     CleanupItems(kGraphicsResourceLifetimes);
@@ -435,6 +490,8 @@ void OnBeginRun() noexcept
     Window::SetWindowResizable(sWindow, false);
 
     LogContextSpecifications();
+
+    gl::UseProgram(sTriangleProgram);
 }
 
 #define LEPONG_LOG_GL_STRING(name) \
@@ -454,6 +511,7 @@ void OnUpdate() noexcept
 
 void OnRender() noexcept
 {
+    gl::DrawArrays(gl::Triangles, 0, 3);
     gl::SwapBuffers(sContext);
 }
 

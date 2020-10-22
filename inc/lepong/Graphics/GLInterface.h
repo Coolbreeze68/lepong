@@ -22,12 +22,14 @@ namespace lepong::Graphics::GL
 enum : GLenum
 {
     False              = 0,
+    Triangles          = 0x0004,
     Float              = 0x1406,
     Vendor             = 0x1F00,
     Renderer           = 0x1F01,
     Version            = 0x1F02,
     ArrayBuffer        = 0x8892,
     ElementArrayBuffer = 0x8893,
+    StaticDraw         = 0x88E4,
     FragmentShader     = 0x8B30,
     VertexShader       = 0x8B31,
     CompileStatus      = 0x8B81,
