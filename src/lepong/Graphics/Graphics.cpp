@@ -68,7 +68,7 @@ GLuint CreateShaderFromSource(GLenum type, const char* source) noexcept
 }
 
 ///
-/// Generic PFNGetItemiv function.
+/// Generic GetItemiv function.
 ///
 using PFNGetItemiv = void (*)(GLuint, GLenum, GLint*);
 
@@ -90,7 +90,7 @@ GLint GetItemiv(GLuint item, GLenum name, PFNGetItemiv getItemiv) noexcept
 }
 
 ///
-/// Generic PFNGetItemInfo function.
+/// Generic GetItemInfo function.
 ///
 using PFNGetItemInfo = void (*)(GLuint, GLsizei, GLsizei*, GLchar*);
 
