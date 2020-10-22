@@ -75,17 +75,19 @@ using PFNGetItemiv = void (*)(GLuint, GLenum, GLint*);
 ///
 /// Returns the provided item's parameter specified by its name.
 ///
-LEPONG_NODISCARD static GLint GetItemiv(GLuint item, GLenum name, PFNGetItemiv getItemiv) noexcept;
+template<PFNGetItemiv GetItemivFunction>
+LEPONG_NODISCARD static GLint GetItemiv(GLuint item, GLenum name) noexcept;
 
 bool ShaderCompileFailed(GLuint shader) noexcept
 {
-    return !GetItemiv(shader, gl::CompileStatus, gl::GetShaderiv);
+    return !GetItemiv<gl::GetShaderiv>(shader, gl::CompileStatus);
 }
 
-GLint GetItemiv(GLuint item, GLenum name, PFNGetItemiv getItemiv) noexcept
+template<PFNGetItemiv GetItemivFunction>
+GLint GetItemiv(GLuint item, GLenum name) noexcept
 {
     GLint value;
-    getItemiv(item, name, &value);
+    GetItemivFunction(item, name, &value);
     return value;
 }
 
@@ -97,22 +99,24 @@ using PFNGetItemInfo = void (*)(GLuint, GLsizei, GLsizei*, GLchar*);
 ///
 /// Logs the provided object's info log.
 ///
-static void LogItemInfo(GLuint item, PFNGetItemiv getItemiv, PFNGetItemInfo getItemInfo) noexcept;
+template<PFNGetItemiv GetItemivFunction, PFNGetItemInfo GetItemInfoFunction>
+static void LogItemInfo(GLuint item) noexcept;
 
 void LogShaderInfo(GLuint shader) noexcept
 {
     Log::Log("Shader info:");
-    LogItemInfo(shader, gl::GetShaderiv, gl::GetShaderInfoLog);
+    LogItemInfo<gl::GetShaderiv, gl::GetShaderInfoLog>(shader);
 }
 
-static void LogItemInfo(GLuint item, PFNGetItemiv getItemiv, PFNGetItemInfo getItemInfo) noexcept
+template<PFNGetItemiv GetItemivFunction, PFNGetItemInfo GetItemInfoFunction>
+static void LogItemInfo(GLuint item) noexcept
 {
-    const auto kInfoLogLength = GetItemiv(item, gl::InfoLogLength, getItemiv);
+    const auto kInfoLogLength = GetItemiv<GetItemivFunction>(item, gl::InfoLogLength);
 
     const auto kInfoLog = std::make_unique<GLchar[]>(kInfoLogLength);
     const auto kInfoLogData = kInfoLog.get();
 
-    getItemInfo(item, kInfoLogLength, nullptr, kInfoLogData);
+    GetItemInfoFunction(item, kInfoLogLength, nullptr, kInfoLogData);
     Log::Log(kInfoLogData);
 }
 
@@ -152,13 +156,13 @@ GLuint CreateProgramFromShaders(GLuint vert, GLuint frag) noexcept
 
 bool ProgramLinkFailed(GLuint program) noexcept
 {
-    return !GetItemiv(program, gl::LinkStatus, gl::GetProgramiv);
+    return !GetItemiv<gl::GetProgramiv>(program, gl::LinkStatus);
 }
 
 void LogProgramInfo(GLuint program) noexcept
 {
     Log::Log("Program info:");
-    LogItemInfo(program, gl::GetProgramiv, gl::GetProgramInfoLog);
+    LogItemInfo<gl::GetProgramiv, gl::GetProgramInfoLog>(program);
 }
 
 PROC LoadOpenGLFunction(const char* name) noexcept
