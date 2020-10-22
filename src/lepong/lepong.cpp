@@ -45,8 +45,7 @@ public:
     /// Both init and cleanup functions must be provided.
     ///
     constexpr Lifetime(PFNInit init, PFNCleanup cleanup) noexcept
-        : mInit(init)
-        , mCleanup(cleanup)
+        : mInit(init), mCleanup(cleanup)
     {
     }
 
@@ -98,10 +97,10 @@ static void CleanupState() noexcept;
 /// All the game's lifetimes.
 ///
 static constexpr Lifetime kGameLifetimes[] =
-{
-    { InitGameSystems, CleanupGameSystems },
-    { InitState, CleanupState }
-};
+    {
+        {InitGameSystems, CleanupGameSystems},
+        {InitState,       CleanupState}
+    };
 
 ///
 /// A wrapper for the pretty ugly array reference syntax.
@@ -166,12 +165,12 @@ void CleanupItemsStartingAt(ConstArrayReference<Lifetime, NumItems> lifetimes, u
 /// All the system lifetimes.
 ///
 static constexpr Lifetime kSystemLifetimes[] =
-{
-    { Window::Init, Window::Cleanup },
-    { Log::Init, Log::Cleanup },
-    { Graphics::Init, Graphics::Cleanup },
-    { gl::Init, gl::Cleanup }
-};
+    {
+        {Window::Init,   Window::Cleanup},
+        {Log::Init,      Log::Cleanup},
+        {Graphics::Init, Graphics::Cleanup},
+        {gl::Init,       gl::Cleanup}
+    };
 
 bool InitGameSystems() noexcept
 {
@@ -198,12 +197,12 @@ void CleanupItems(ConstArrayReference<Lifetime, NumItems> itemLifetimes) noexcep
 ///
 /// \return Whether the game window was successfully initialized.
 ///
-LEPONG_NODISCARD static bool InitWindow() noexcept;
+LEPONG_NODISCARD static bool InitGameWindow() noexcept;
 
 ///
 /// Cleans up the game window.
 ///
-static void CleanupWindow() noexcept;
+static void CleanupGameWindow() noexcept;
 
 ///
 /// \return Whether the rendering context was successfully initialized.
@@ -229,11 +228,11 @@ static void CleanupGraphicsResources() noexcept;
 /// All the game state lifetimes.
 ///
 static constexpr Lifetime kStateLifetimes[] =
-{
-    { InitWindow, CleanupWindow },
-    { InitContext, CleanupContext },
-    { InitGraphicsResources, CleanupGraphicsResources },
-};
+    {
+        {InitGameWindow,        CleanupGameWindow},
+        {InitContext,           CleanupContext},
+        {InitGraphicsResources, CleanupGraphicsResources},
+    };
 
 bool InitState() noexcept
 {
@@ -246,20 +245,20 @@ bool InitState() noexcept
 ///
 static void OnKeyEvent(int key, bool pressed) noexcept;
 
-bool InitWindow() noexcept
+bool InitGameWindow() noexcept
 {
     Window::SetKeyCallback(OnKeyEvent);
-    sWindow = Window::MakeWindow(Vector2i{ 1280, 720 }, L"lepong");
+    sWindow = Window::MakeWindow(Vector2i{1280, 720}, L"lepong");
     return sWindow;
 }
 
 void OnKeyEvent(int key, bool pressed) noexcept
 {
-    (void)key;
-    (void)pressed;
+    (void) key;
+    (void) pressed;
 }
 
-void CleanupWindow() noexcept
+void CleanupGameWindow() noexcept
 {
     Window::DestroyWindow(sWindow);
 }
@@ -296,9 +295,9 @@ static void CleanupTriangleProgram() noexcept;
 /// All the graphics resource lifetimes.
 ///
 static constexpr Lifetime kGraphicsResourceLifetimes[] =
-{
-    { InitTriangleProgram, CleanupTriangleProgram }
-};
+    {
+        {InitTriangleProgram, CleanupTriangleProgram}
+    };
 
 bool InitGraphicsResources() noexcept
 {
@@ -331,7 +330,7 @@ bool InitTriangleProgram() noexcept
 GLuint CreateTriangleVertShader() noexcept
 {
     constexpr auto kSource =
-    R"(
+        R"(
 
     #version 330 core
 
@@ -354,7 +353,7 @@ GLuint CreateTriangleVertShader() noexcept
 GLuint CreateTriangleFragShader() noexcept
 {
     constexpr auto kSource =
-    R"(
+        R"(
 
     #version 330 core
 
@@ -390,28 +389,52 @@ void CleanupState() noexcept
 static auto sRunning = false;
 
 ///
-/// Logs the current context's specifications.
+/// Called before entering the main loop.
 ///
-static void LogContextSpecifications() noexcept;
+static void OnBeginRun() noexcept;
+
+///
+/// Called at each game update.
+///
+static void OnUpdate() noexcept;
+
+///
+/// Called at each game frame.
+///
+static void OnRender() noexcept;
+
+///
+/// Called when exiting the main loop.
+///
+static void OnExit() noexcept;
 
 void Run() noexcept
 {
     LEPONG_ASSERT_OR_RETURN(sInitialized && !sRunning);
 
     sRunning = true;
+    OnBeginRun();
 
+    while (sRunning)
+    {
+        OnUpdate();
+        OnRender();
+    }
+
+    OnExit();
+}
+
+///
+/// Logs the current context's specifications.
+///
+static void LogContextSpecifications() noexcept;
+
+void OnBeginRun() noexcept
+{
     Window::ShowWindow(sWindow);
     Window::SetWindowResizable(sWindow, false);
 
     LogContextSpecifications();
-
-    while (sRunning)
-    {
-        sRunning = Window::PollEvents();
-        gl::SwapBuffers(sContext);
-    }
-
-    Window::HideWindow(sWindow);
 }
 
 #define LEPONG_LOG_GL_STRING(name) \
@@ -422,6 +445,21 @@ void LogContextSpecifications() noexcept
     LEPONG_LOG_GL_STRING(gl::Version);
     LEPONG_LOG_GL_STRING(gl::Vendor);
     LEPONG_LOG_GL_STRING(gl::Renderer);
+}
+
+void OnUpdate() noexcept
+{
+    sRunning = Window::PollEvents();
+}
+
+void OnRender() noexcept
+{
+    gl::SwapBuffers(sContext);
+}
+
+void OnExit() noexcept
+{
+    Window::HideWindow(sWindow);
 }
 
 void Cleanup() noexcept
