@@ -193,8 +193,9 @@ HGLRC MakeAdvancedContext(HDC device) noexcept
 
     constexpr int kAttributes[] =
     {
-        WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-        WGL_CONTEXT_MINOR_VERSION_ARB, 3,
+        // Use the latest available version.
+        WGL_CONTEXT_MAJOR_VERSION_ARB, 1,
+        WGL_CONTEXT_MINOR_VERSION_ARB, 0,
         0
     };
 

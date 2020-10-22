@@ -4,6 +4,8 @@
 
 #include <cstdint>
 
+#include <iostream> // Debug
+
 #include "lepong/Assert.h"
 #include "lepong/Attribute.h"
 #include "lepong/lepong.h"
@@ -461,7 +463,7 @@ static void OnRender() noexcept;
 ///
 /// Called when exiting the main loop.
 ///
-static void OnExit() noexcept;
+static void OnFinishRun() noexcept;
 
 void Run() noexcept
 {
@@ -470,13 +472,14 @@ void Run() noexcept
     sRunning = true;
     OnBeginRun();
 
+
     while (sRunning)
     {
         OnUpdate();
         OnRender();
     }
 
-    OnExit();
+    OnFinishRun();
 }
 
 ///
@@ -515,7 +518,7 @@ void OnRender() noexcept
     gl::SwapBuffers(sContext);
 }
 
-void OnExit() noexcept
+void OnFinishRun() noexcept
 {
     Window::HideWindow(sWindow);
 }
