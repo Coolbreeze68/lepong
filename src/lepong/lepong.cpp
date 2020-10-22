@@ -339,7 +339,7 @@ bool InitTriangleProgram() noexcept
 GLuint CreateTriangleVertShader() noexcept
 {
     constexpr auto kSource =
-        R"(
+    R"(
 
     #version 330 core
 
@@ -362,7 +362,7 @@ GLuint CreateTriangleVertShader() noexcept
 GLuint CreateTriangleFragShader() noexcept
 {
     constexpr auto kSource =
-        R"(
+    R"(
 
     #version 330 core
 
