@@ -8,6 +8,7 @@
 #include "lepong/Attribute.h"
 #include "lepong/lepong.h"
 #include "lepong/Log.h"
+#include "lepong/Quad.h"
 #include "lepong/Window.h"
 
 #include "lepong/Graphics/Graphics.h"
@@ -22,6 +23,8 @@ static gl::Context sContext;
 
 static GLuint sTriangleProgram;
 static GLuint sTriangleVB;
+
+static Quad sQuad;
 
 ///
 /// A class holding the init and cleanup functions of any item.
@@ -290,22 +293,11 @@ LEPONG_NODISCARD static bool InitTriangleProgram() noexcept;
 static void CleanupTriangleProgram() noexcept;
 
 ///
-/// \return I think you can guess.
-///
-LEPONG_NODISCARD static bool InitTriangleVB() noexcept;
-
-///
-/// You guessed it again.
-///
-static void CleanupTriangleVB() noexcept;
-
-///
 /// All the graphics resource lifetimes.
 ///
 static constexpr Lifetime kGraphicsResourceLifetimes[] =
 {
-    { InitTriangleProgram, CleanupTriangleProgram },
-    { InitTriangleVB, CleanupTriangleVB }
+    { InitTriangleProgram, CleanupTriangleProgram }
 };
 
 bool InitGraphicsResources() noexcept

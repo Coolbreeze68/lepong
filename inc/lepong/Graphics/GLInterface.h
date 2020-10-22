@@ -23,6 +23,7 @@ enum : GLenum
 {
     False              = 0,
     Triangles          = 0x0004,
+    UnsignedInt        = 0x1405,
     Float              = 0x1406,
     Vendor             = 0x1F00,
     Renderer           = 0x1F01,
