@@ -224,7 +224,7 @@ void ShowWindow(HWND window) noexcept
 
 void SetWindowVisible(HWND window, bool visible) noexcept
 {
-    ShowWindow(window, visible ? SW_SHOW : SW_HIDE);
+    ::ShowWindow(window, visible ? SW_SHOW : SW_HIDE);
 }
 
 void HideWindow(HWND window) noexcept
