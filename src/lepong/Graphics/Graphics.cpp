@@ -167,12 +167,12 @@ PROC LoadOpenGLFunction(const char* name) noexcept
 
     const auto kFunction = wglGetProcAddress(name);
 
-    if (!kFunction)
+    if (kFunction)
     {
-        return GetProcAddress(sOpenGLLibrary, name);
+        return kFunction;
     }
 
-    return kFunction;
+    return GetProcAddress(sOpenGLLibrary, name);
 }
 
 } // namespace lepong::Graphics
