@@ -395,10 +395,7 @@ bool InitTriangleMesh() noexcept
          0.5f, -0.5f, 1.0f, 0.0f, 1.0f
     };
 
-    const Graphics::Indices kIndices =
-    {
-        0, 1, 2
-    };
+    const Graphics::Indices kIndices = { 0, 1, 2 };
 
     sTriangleMesh = Graphics::MakeMesh(kVertices, kIndices);
 
