@@ -8,10 +8,10 @@
 #include "lepong/Attribute.h"
 #include "lepong/lepong.h"
 #include "lepong/Log.h"
-#include "lepong/Quad.h"
 #include "lepong/Window.h"
 
 #include "lepong/Graphics/Graphics.h"
+#include "lepong/Graphics/Mesh.h"
 
 namespace lepong
 {
@@ -22,9 +22,7 @@ static HWND sWindow;
 static gl::Context sContext;
 
 static GLuint sTriangleProgram;
-static GLuint sTriangleVB;
-
-static Quad sQuad;
+static Graphics::Mesh sTriangleMesh;
 
 ///
 /// A class holding the init and cleanup functions of any item.
@@ -293,11 +291,22 @@ LEPONG_NODISCARD static bool InitTriangleProgram() noexcept;
 static void CleanupTriangleProgram() noexcept;
 
 ///
+/// Oh boy.
+///
+LEPONG_NODISCARD static bool InitTriangleMesh() noexcept;
+
+///
+/// This is getting tedious.
+///
+static void CleanupTriangleMesh() noexcept;
+
+///
 /// All the graphics resource lifetimes.
 ///
 static constexpr Lifetime kGraphicsResourceLifetimes[] =
 {
-    { InitTriangleProgram, CleanupTriangleProgram }
+    { InitTriangleProgram, CleanupTriangleProgram },
+    { InitTriangleMesh, CleanupTriangleMesh }
 };
 
 bool InitGraphicsResources() noexcept
@@ -377,50 +386,31 @@ void CleanupTriangleProgram() noexcept
     gl::DeleteProgram(sTriangleProgram);
 }
 
-///
-/// Sends triangle data to the triangle vertex shader.
-///
-static void InitTriangleVertexData() noexcept;
-
-bool InitTriangleVB() noexcept
+bool InitTriangleMesh() noexcept
 {
-    gl::GenBuffers(1, &sTriangleVB);
-
-    if (sTriangleVB)
-    {
-        InitTriangleVertexData();
-    }
-
-    return sTriangleVB;
-}
-
-void InitTriangleVertexData() noexcept
-{
-    gl::BindBuffer(gl::ArrayBuffer, sTriangleVB);
-
-    constexpr GLfloat kVertices[] =
+    const Graphics::Vertices kVertices =
     {
         -0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
          0.0f,  0.5f, 0.0f, 1.0f, 1.0f,
          0.5f, -0.5f, 1.0f, 0.0f, 1.0f
     };
 
-    gl::BufferData(gl::ArrayBuffer, sizeof(kVertices), kVertices, gl::StaticDraw);
+    const Graphics::Indices kIndices =
+    {
+        0, 1, 2
+    };
 
-    const auto kStride = sizeof(GLfloat) * 5;
+    sTriangleMesh = Graphics::MakeMesh(kVertices, kIndices);
 
-    gl::EnableVertexAttribArray(0);
-    gl::VertexAttribPointer(0, 2, gl::Float, gl::False, kStride, nullptr);
+    const Graphics::VertexLayout kVertexLayout = { 2, 3 };
+    Graphics::SetMeshVertexLayout(sTriangleMesh, kVertexLayout);
 
-    const auto kOffset = reinterpret_cast<void*>(sizeof(GLfloat) * 2);
-
-    gl::EnableVertexAttribArray(1);
-    gl::VertexAttribPointer(1, 3, gl::Float, gl::False, kStride, kOffset);
+    return sTriangleMesh.IsValid();
 }
 
-void CleanupTriangleVB() noexcept
+void CleanupTriangleMesh() noexcept
 {
-    gl::DeleteBuffers(1, &sTriangleVB);
+    Graphics::DestroyMesh(sTriangleMesh);
 }
 
 void CleanupGraphicsResources() noexcept
@@ -504,7 +494,7 @@ void OnUpdate() noexcept
 
 void OnRender() noexcept
 {
-    gl::DrawArrays(gl::Triangles, 0, 3);
+    Graphics::DrawMesh(sTriangleMesh, sTriangleProgram);
     gl::SwapBuffers(sContext);
 }
 

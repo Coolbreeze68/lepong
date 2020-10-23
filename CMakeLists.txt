@@ -8,7 +8,6 @@ add_executable(lepong
     inc/lepong/Graphics/GLInterface.h
     inc/lepong/Graphics/Graphics.h
     inc/lepong/Graphics/Mesh.h
-    inc/lepong/Math/AABB.h
     inc/lepong/Math/Math.h
     inc/lepong/Math/Vector2.h
     inc/lepong/Assert.h
@@ -16,7 +15,6 @@ add_executable(lepong
     inc/lepong/lepong.h
     inc/lepong/Log.h
     inc/lepong/OS.h
-    inc/lepong/Quad.h
     inc/lepong/Window.h
     src/lepong/Graphics/Extensions.h
     src/lepong/Graphics/GL.cpp
@@ -26,7 +24,6 @@ add_executable(lepong
     src/lepong/lepong.cpp
     src/lepong/Log.cpp
     src/lepong/Main.cpp
-    src/lepong/Quad.cpp
     src/lepong/Window.cpp)
 
 target_link_libraries(lepong
