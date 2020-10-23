@@ -16,15 +16,15 @@ add_executable(lepong
     inc/lepong/Log.h
     inc/lepong/OS.h
     inc/lepong/Window.h
-    src/lepong/Graphics/Extensions.h
-    src/lepong/Graphics/GL.cpp
-    src/lepong/Graphics/Graphics.cpp
-    src/lepong/Graphics/LoadOpenGLFunction.h
-    src/lepong/Graphics/Mesh.cpp
-    src/lepong/lepong.cpp
-    src/lepong/Log.cpp
-    src/lepong/Main.cpp
-    src/lepong/Window.cpp)
+    src/Graphics/Extensions.h
+    src/Graphics/GL.cpp
+    src/Graphics/Graphics.cpp
+    src/Graphics/LoadOpenGLFunction.h
+    src/Graphics/Mesh.cpp
+    src/lepong.cpp
+    src/Log.cpp
+    src/Main.cpp
+    src/Window.cpp)
 
 target_link_libraries(lepong
     User32
