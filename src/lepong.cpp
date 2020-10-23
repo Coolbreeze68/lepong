@@ -11,7 +11,7 @@
 #include "lepong/Window.h"
 
 #include "lepong/Graphics/Graphics.h"
-#include "lepong/Graphics/Mesh.h"
+#include "lepong/Graphics/Quad.h"
 
 namespace lepong
 {
@@ -21,8 +21,8 @@ static auto sInitialized = false;
 static HWND sWindow;
 static gl::Context sContext;
 
-static GLuint sTriangleProgram;
-static Graphics::Mesh sTriangleMesh;
+static GLuint sPaddleProgram;
+static Graphics::Mesh sQuad;
 
 ///
 /// A class holding the init and cleanup functions of any item.
@@ -283,30 +283,30 @@ void CleanupContext() noexcept
 ///
 /// \return Can you guess?
 ///
-LEPONG_NODISCARD static bool InitTriangleProgram() noexcept;
+LEPONG_NODISCARD static bool InitPaddleProgram() noexcept;
 
 ///
 /// You guessed it.
 ///
-static void CleanupTriangleProgram() noexcept;
+static void CleanupPaddleProgram() noexcept;
 
 ///
 /// Oh boy.
 ///
-LEPONG_NODISCARD static bool InitTriangleMesh() noexcept;
+LEPONG_NODISCARD static bool InitQuad() noexcept;
 
 ///
 /// This is getting tedious.
 ///
-static void CleanupTriangleMesh() noexcept;
+static void CleanupQuad() noexcept;
 
 ///
 /// All the graphics resource lifetimes.
 ///
 static constexpr Lifetime kGraphicsResourceLifetimes[] =
 {
-    { InitTriangleProgram, CleanupTriangleProgram },
-    { InitTriangleMesh, CleanupTriangleMesh }
+    { InitPaddleProgram, CleanupPaddleProgram },
+    { InitQuad, CleanupQuad }
 };
 
 bool InitGraphicsResources() noexcept
@@ -315,29 +315,29 @@ bool InitGraphicsResources() noexcept
 }
 
 ///
-/// \return The triangle vertex shader.
+/// \return The paddle vertex shader.
 ///
-static GLuint CreateTriangleVertShader() noexcept;
+static GLuint CreatePaddleVertShader() noexcept;
 
 ///
-/// \return The triangle fragment shader. Unbelievable.
+/// \return The paddle fragment shader. Unbelievable.
 ///
-static GLuint CreateTriangleFragShader() noexcept;
+static GLuint CreatePaddleFragShader() noexcept;
 
-bool InitTriangleProgram() noexcept
+bool InitPaddleProgram() noexcept
 {
-    const auto kVert = CreateTriangleVertShader();
-    const auto kFrag = CreateTriangleFragShader();
+    const auto kVert = CreatePaddleVertShader();
+    const auto kFrag = CreatePaddleFragShader();
 
-    sTriangleProgram = Graphics::CreateProgramFromShaders(kVert, kFrag);
+    sPaddleProgram = Graphics::CreateProgramFromShaders(kVert, kFrag);
 
     gl::DeleteShader(kVert);
     gl::DeleteShader(kFrag);
 
-    return sTriangleProgram;
+    return sPaddleProgram;
 }
 
-GLuint CreateTriangleVertShader() noexcept
+GLuint CreatePaddleVertShader() noexcept
 {
     constexpr auto kSource =
     R"(
@@ -345,14 +345,10 @@ GLuint CreateTriangleVertShader() noexcept
     #version 330 core
 
     layout (location = 0) in vec2 aPosition;
-    layout (location = 1) in vec3 aColor;
-
-    out vec3 vColor;
 
     void main()
     {
         gl_Position = vec4(aPosition, 0.0, 1.0);
-        vColor = aColor;
     }
 
     )";
@@ -360,20 +356,18 @@ GLuint CreateTriangleVertShader() noexcept
     return Graphics::CreateShaderFromSource(gl::VertexShader, kSource);
 }
 
-GLuint CreateTriangleFragShader() noexcept
+GLuint CreatePaddleFragShader() noexcept
 {
     constexpr auto kSource =
     R"(
 
     #version 330 core
 
-    in vec3 vColor;
-
     out vec4 FragColor;
 
     void main()
     {
-        FragColor = vec4(vColor, 1.0);
+        FragColor = vec4(1.0, 1.0, 1.0, 1.0);
     }
 
     )";
@@ -381,33 +375,20 @@ GLuint CreateTriangleFragShader() noexcept
     return Graphics::CreateShaderFromSource(gl::FragmentShader, kSource);
 }
 
-void CleanupTriangleProgram() noexcept
+void CleanupPaddleProgram() noexcept
 {
-    gl::DeleteProgram(sTriangleProgram);
+    gl::DeleteProgram(sPaddleProgram);
 }
 
-bool InitTriangleMesh() noexcept
+bool InitQuad() noexcept
 {
-    const Graphics::Vertices kVertices =
-    {
-        -0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
-         0.0f,  0.5f, 0.0f, 1.0f, 1.0f,
-         0.5f, -0.5f, 1.0f, 0.0f, 1.0f
-    };
-
-    const Graphics::Indices kIndices = { 0, 1, 2 };
-
-    sTriangleMesh = Graphics::MakeMesh(kVertices, kIndices);
-
-    const Graphics::VertexLayout kVertexLayout = { 2, 3 };
-    Graphics::SetMeshVertexLayout(sTriangleMesh, kVertexLayout);
-
-    return sTriangleMesh.IsValid();
+    sQuad = Graphics::MakeSimpleQuad();
+    return sQuad.IsValid();
 }
 
-void CleanupTriangleMesh() noexcept
+void CleanupQuad() noexcept
 {
-    Graphics::DestroyMesh(sTriangleMesh);
+    Graphics::DestroyMesh(sQuad);
 }
 
 void CleanupGraphicsResources() noexcept
@@ -471,7 +452,7 @@ void OnBeginRun() noexcept
 
     LogContextSpecifications();
 
-    gl::UseProgram(sTriangleProgram);
+    gl::UseProgram(sPaddleProgram);
 }
 
 #define LEPONG_LOG_GL_STRING(name) \
@@ -491,7 +472,7 @@ void OnUpdate() noexcept
 
 void OnRender() noexcept
 {
-    Graphics::DrawMesh(sTriangleMesh, sTriangleProgram);
+    Graphics::DrawMesh(sQuad, sPaddleProgram);
     gl::SwapBuffers(sContext);
 }
 

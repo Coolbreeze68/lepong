@@ -24,7 +24,7 @@ add_executable(lepong
     src/lepong.cpp
     src/Log.cpp
     src/Main.cpp
-    src/Window.cpp)
+    src/Window.cpp inc/lepong/Graphics/Quad.h src/Graphics/Quad.cpp)
 
 target_link_libraries(lepong
     User32
