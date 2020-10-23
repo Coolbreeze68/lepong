@@ -1,7 +1,7 @@
 # lepong
 A fully featured Pong clone made for Windows from scratch.
 
-##Building
+## Building
 The following code typically does the job.
 ```
 mkdir build
