@@ -11,6 +11,9 @@
 namespace lepong::Graphics
 {
 
+///
+/// A struct holding mesh data handles.
+///
 struct Mesh
 {
     GLuint va = 0;
@@ -26,8 +29,19 @@ public:
     }
 };
 
+///
+/// Mesh vertices.
+///
 using Vertices = std::vector<GLfloat>;
+
+///
+/// Mesh indices.
+///
 using Indices = std::vector<GLuint>;
+
+///
+/// Mesh vertex layout. Yeah.
+///
 using VertexLayout = std::vector<GLuint>;
 
 ///
