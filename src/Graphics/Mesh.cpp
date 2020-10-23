@@ -66,20 +66,20 @@ void LoadIndexData(Mesh& mesh, const Indices& indices) noexcept
     mesh.numIndices = indices.size();
 }
 
-void SetMeshVertexLayout(const Mesh& mesh, const VertexLayout& layout) noexcept
+void SetMeshVertexLayout(const Mesh& mesh, const VertexLayout& vertexLayout) noexcept
 {
     LEPONG_ASSERT_OR_RETURN(mesh.va);
 
     gl::BindVertexArray(mesh.va);
 
-    const auto kStride = std::accumulate(layout.begin(), layout.end(), 0u) * sizeof(GLfloat);
+    const auto kStride = std::accumulate(vertexLayout.begin(), vertexLayout.end(), 0u) * sizeof(GLfloat);
     GLsizeiptr attributeOffset = 0;
 
-    for (GLuint i = 0; i < layout.size(); ++i)
+    for (GLuint i = 0; i < vertexLayout.size(); ++i)
     {
         gl::EnableVertexAttribArray(i);
 
-        const auto kAttributeSize = layout[i];
+        const auto kAttributeSize = vertexLayout[i];
         gl::VertexAttribPointer(i, kAttributeSize, gl::Float, gl::False, kStride, (void*)attributeOffset);
 
         attributeOffset += kAttributeSize * sizeof(GLfloat);

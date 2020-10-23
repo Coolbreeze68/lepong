@@ -53,7 +53,7 @@ LEPONG_NODISCARD Mesh MakeMesh(const Vertices& vertices, const Indices& indices)
 /// Sets the provided mesh's vertex layout.<br>
 /// If the provided mesh is not valid, this function does nothing.
 ///
-void SetMeshVertexLayout(const Mesh& mesh, const VertexLayout& layout) noexcept;
+void SetMeshVertexLayout(const Mesh& mesh, const VertexLayout& vertexLayout) noexcept;
 
 ///
 /// Draws the provided mesh using the current program.<br>
