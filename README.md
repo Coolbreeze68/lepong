@@ -1,7 +1,15 @@
 # lepong
 A fully featured Pong clone made for Windows from scratch.
 
-## Coding style
+##Building
+The following code typically does the job.
+```
+mkdir build
+cd build
+cmake ../
+```
+
+## Coding Style
 When I started this project, I didn't really know what its coding style would be.
 Right now it's pretty much a C interface with a C++ implementation.
 
