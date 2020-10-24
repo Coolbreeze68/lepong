@@ -10,7 +10,10 @@ add_executable(lepong
     inc/lepong/Graphics/Mesh.h
     inc/lepong/Graphics/Quad.h
     inc/lepong/Math/Math.h
+    inc/lepong/Math/Matrix4.h
+    inc/lepong/Math/Transform.h
     inc/lepong/Math/Vector2.h
+    inc/lepong/Math/Vector4.h
     inc/lepong/Assert.h
     inc/lepong/Attribute.h
     inc/lepong/lepong.h
@@ -26,7 +29,7 @@ add_executable(lepong
     src/lepong.cpp
     src/Log.cpp
     src/Main.cpp
-    src/Window.cpp inc/lepong/Math/Vector4.h inc/lepong/Math/Matrix4.h inc/lepong/Math/Transform.h)
+    src/Window.cpp)
 
 target_link_libraries(lepong
     User32
