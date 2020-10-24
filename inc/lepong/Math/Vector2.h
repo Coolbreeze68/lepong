@@ -14,8 +14,8 @@ namespace lepong
 template<typename Scalar, std::enable_if_t<std::is_arithmetic_v<Scalar>, int> = 0>
 struct Vector2
 {
-    Scalar x;
-    Scalar y;
+    Scalar x = 0;
+    Scalar y = 0;
 
 public:
     constexpr Vector2 operator*=(Scalar s) const noexcept

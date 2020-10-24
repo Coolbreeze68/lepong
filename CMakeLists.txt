@@ -26,7 +26,7 @@ add_executable(lepong
     src/lepong.cpp
     src/Log.cpp
     src/Main.cpp
-    src/Window.cpp)
+    src/Window.cpp inc/lepong/Math/Vector4.h inc/lepong/Math/Matrix4.h inc/lepong/Math/Transform.h)
 
 target_link_libraries(lepong
     User32

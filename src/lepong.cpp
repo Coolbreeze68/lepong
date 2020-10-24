@@ -430,7 +430,6 @@ void Run() noexcept
     sRunning = true;
     OnBeginRun();
 
-
     while (sRunning)
     {
         OnUpdate();
