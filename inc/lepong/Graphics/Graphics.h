@@ -27,6 +27,8 @@ LEPONG_NODISCARD bool Init() noexcept;
 ///
 void Cleanup() noexcept;
 
+// The following functions require the gl system to be initialized.
+
 ///
 /// Creates a shader using the provided source code.<br>
 ///
