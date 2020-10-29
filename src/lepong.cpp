@@ -455,13 +455,13 @@ void OnBeginRun() noexcept
 }
 
 #define LEPONG_LOG_GL_STRING(name) \
-    Log::Log(reinterpret_cast<const char*>(gl::GetString(name)))
+    Log::Log(reinterpret_cast<const char*>(gl::GetString(gl::name)))
 
 void LogContextSpecifications() noexcept
 {
-    LEPONG_LOG_GL_STRING(gl::Version);
-    LEPONG_LOG_GL_STRING(gl::Vendor);
-    LEPONG_LOG_GL_STRING(gl::Renderer);
+    LEPONG_LOG_GL_STRING(Version);
+    LEPONG_LOG_GL_STRING(Vendor);
+    LEPONG_LOG_GL_STRING(Renderer);
 }
 
 void OnUpdate() noexcept
