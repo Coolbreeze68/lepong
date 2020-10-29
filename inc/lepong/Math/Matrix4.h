@@ -65,12 +65,12 @@ public:
 
     LEPONG_NODISCARD constexpr Scalar* Data() noexcept
     {
-        return &mData->x;
+        return &(mData->x);
     }
 
     LEPONG_NODISCARD constexpr const Scalar* Data() const noexcept
     {
-        return &mData->x;
+        return &(mData->x);
     }
 
 private:
@@ -125,7 +125,7 @@ LEPONG_NODISCARD constexpr Vector4<Scalar> operator*(const Matrix4<Scalar>& a, c
         Dot(a[0], b),
         Dot(a[1], b),
         Dot(a[2], b),
-        Dot(a[3], b),
+        Dot(a[3], b)
     };
 }
 
