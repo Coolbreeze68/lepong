@@ -4,8 +4,6 @@
 
 #pragma once
 
-// See the bottom of the file for the namespace alias.
-
 #include <cstdint>
 
 #include <Windows.h> // Needed by "GL.h".
