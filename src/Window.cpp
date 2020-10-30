@@ -24,6 +24,8 @@ bool Init() noexcept
     LEPONG_ASSERT_OR_RETURN_VAL(!sInitialized, false);
 
     sInitialized = RegisterWindowClass();
+    LEPONG_ASSERT_OR_LOG(sInitialized, "Failed to register window class");
+
     return sInitialized;
 }
 

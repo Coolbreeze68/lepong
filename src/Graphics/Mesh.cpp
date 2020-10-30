@@ -97,7 +97,7 @@ void DrawMesh(const Mesh& mesh) noexcept
 
 void DrawMesh(const Mesh& mesh, GLuint program) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(mesh.va);
+    LEPONG_ASSERT_OR_RETURN(mesh.va && program);
 
     gl::UseProgram(program);
     DrawMesh(mesh);

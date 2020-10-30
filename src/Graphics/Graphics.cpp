@@ -23,6 +23,8 @@ bool Init() noexcept
     LEPONG_ASSERT_OR_RETURN_VAL(!sOpenGLLibrary, false);
 
     sOpenGLLibrary = LoadLibraryA("OpenGL32.dll");
+    LEPONG_ASSERT_OR_LOG(sOpenGLLibrary, "Failed to load OpenGL");
+
     return sOpenGLLibrary;
 }
 

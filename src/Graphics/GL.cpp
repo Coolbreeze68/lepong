@@ -42,6 +42,7 @@ bool Init() noexcept
     sInitialized = LoadRequiredOpenGLFunctions();
     DestroyDummyContext(kContext);
 
+    LEPONG_ASSERT_OR_LOG(sInitialized, "Failed to load OpenGL functions");
     return sInitialized;
 }
 
@@ -193,9 +194,8 @@ HGLRC MakeAdvancedContext(HDC device) noexcept
 
     constexpr int kAttributes[] =
     {
-        // Use the latest available version.
-        WGL_CONTEXT_MAJOR_VERSION_ARB, 1,
-        WGL_CONTEXT_MINOR_VERSION_ARB, 0,
+        WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
+        WGL_CONTEXT_MINOR_VERSION_ARB, 3,
         0
     };
 
