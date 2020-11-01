@@ -2,6 +2,8 @@
 // Created by lepouki on 10/15/2020.
 //
 
+#include <lepong/Graphics/GLInterface.h>
+
 #include "Extensions.h"
 #include "LoadOpenGLFunction.h"
 
@@ -124,6 +126,8 @@ LEPONG_DECL_OPENGL_FUNCTION(glBindBuffer);
 LEPONG_DECL_OPENGL_FUNCTION(glBufferData);
 LEPONG_DECL_OPENGL_FUNCTION(glEnableVertexAttribArray);
 LEPONG_DECL_OPENGL_FUNCTION(glVertexAttribPointer);
+LEPONG_DECL_OPENGL_FUNCTION(glGetUniformLocation);
+LEPONG_DECL_OPENGL_FUNCTION(glUniform2f);
 
 bool LoadRequiredOpenGLFunctions() noexcept
 {
@@ -151,7 +155,9 @@ bool LoadRequiredOpenGLFunctions() noexcept
         LEPONG_LOAD_OPENGL_FUNCTION(glBindBuffer) &&
         LEPONG_LOAD_OPENGL_FUNCTION(glBufferData) &&
         LEPONG_LOAD_OPENGL_FUNCTION(glEnableVertexAttribArray) &&
-        LEPONG_LOAD_OPENGL_FUNCTION(glVertexAttribPointer);
+        LEPONG_LOAD_OPENGL_FUNCTION(glVertexAttribPointer) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glGetUniformLocation) &&
+        LEPONG_LOAD_OPENGL_FUNCTION(glUniform2f);
 }
 
 void DestroyDummyContext(const Context& context) noexcept
@@ -356,14 +362,24 @@ void VertexAttribPointer(
     glVertexAttribPointer(index, size, type, normalized, stride, pointer);
 }
 
-void DrawArrays(GLenum mode, GLint first, GLsizei count) noexcept
-{
-    glDrawArrays(mode, first, count);
-}
-
 void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) noexcept
 {
     glDrawElements(mode, count, type, indices);
+}
+
+void Clear(GLbitfield mask) noexcept
+{
+    glClear(mask);
+}
+
+GLint GetUniformLocation(GLuint program, const GLchar* name) noexcept
+{
+    return glGetUniformLocation(program, name);
+}
+
+void Uniform2f(GLint location, GLfloat v0, GLfloat v1) noexcept
+{
+    glUniform2f(location, v0, v1);
 }
 
 } // namespace lepong::Graphics::GL

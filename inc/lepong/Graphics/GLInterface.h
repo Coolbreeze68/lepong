@@ -26,6 +26,7 @@ enum : GLenum
     Vendor             = 0x1F00,
     Renderer           = 0x1F01,
     Version            = 0x1F02,
+    ColorBufferBit     = 0x4000,
     ArrayBuffer        = 0x8892,
     ElementArrayBuffer = 0x8893,
     StaticDraw         = 0x88E4,
@@ -148,11 +149,6 @@ void VertexAttribPointer(
     GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer) noexcept;
 
 ///
-/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDrawArrays.xhtml
-///
-void DrawArrays(GLenum mode, GLint first, GLsizei count) noexcept;
-
-///
 /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDrawElements.xhtml
 ///
 void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) noexcept;
@@ -161,5 +157,20 @@ void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) 
 /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetString.xhtml
 ///
 LEPONG_NODISCARD const GLubyte* GetString(GLenum name) noexcept;
+
+///
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glClear.xml
+///
+void Clear(GLbitfield mask) noexcept;
+
+///
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetUniformLocation.xhtml
+///
+LEPONG_NODISCARD GLint GetUniformLocation(GLuint program, const GLchar* name) noexcept;
+
+///
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glUniform.xhtml
+///
+void Uniform2f(GLint location, GLfloat v0, GLfloat v1) noexcept;
 
 } // namespace lepong::Graphics::GL

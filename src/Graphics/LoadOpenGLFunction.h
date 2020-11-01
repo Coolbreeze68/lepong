@@ -40,6 +40,8 @@ using PFNglBindBuffer = void (WINAPI*)(GLenum, GLuint);
 using PFNglBufferData = void (WINAPI*)(GLenum, GLsizeiptr, const void*, GLenum);
 using PFNglEnableVertexAttribArray = void (WINAPI*)(GLuint);
 using PFNglVertexAttribPointer = void (WINAPI*)(GLuint, GLint, GLenum, GLboolean, GLsizei, const void*);
+using PFNglGetUniformLocation = GLint (WINAPI*)(GLuint, const GLchar*);
+using PFNglUniform2f = void (WINAPI*)(GLint, GLfloat, GLfloat);
 
 ///
 /// Returns a pointer to the provided OpenGL function.

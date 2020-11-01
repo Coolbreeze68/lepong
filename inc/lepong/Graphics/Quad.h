@@ -19,4 +19,6 @@ LEPONG_NODISCARD Mesh MakeSimpleQuad() noexcept;
 ///
 LEPONG_NODISCARD Mesh MakeTextureReadyQuad() noexcept;
 
+
+
 } // namespace lepong::Graphics

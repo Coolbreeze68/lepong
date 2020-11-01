@@ -4,6 +4,8 @@
 
 #include <cstdint>
 
+#include <iostream> // Debug
+
 #include "lepong/Assert.h"
 #include "lepong/Attribute.h"
 #include "lepong/lepong.h"
@@ -15,6 +17,8 @@
 
 namespace lepong
 {
+
+static constexpr Vector2i skWinSize = { 1280, 720 };
 
 static auto sInitialized = false;
 
@@ -249,12 +253,25 @@ static void OnKeyEvent(int key, bool pressed) noexcept;
 bool InitGameWindow() noexcept
 {
     Window::SetKeyCallback(OnKeyEvent);
-    sWindow = Window::MakeWindow(Vector2i{1280, 720}, L"lepong");
+    sWindow = Window::MakeWindow(skWinSize, L"lepong");
     return sWindow;
 }
 
-void OnKeyEvent(LEPONG_MAYBE_UNUSED int key, LEPONG_MAYBE_UNUSED bool pressed) noexcept
+static Vector2f sPaddlePosition = { 0, 0 };
+
+void OnKeyEvent(int key, bool pressed) noexcept
 {
+    if (pressed)
+    {
+        if (key == VK_LEFT)
+        {
+            sPaddlePosition.x -= 50;
+        }
+        else if (key == VK_RIGHT)
+        {
+            sPaddlePosition.x += 50;
+        }
+    }
 }
 
 void CleanupGameWindow() noexcept
@@ -315,18 +332,23 @@ bool InitGraphicsResources() noexcept
 }
 
 ///
-/// \return The paddle vertex shader.
+/// \return A generic object vertex shader.
 ///
-static GLuint CreatePaddleVertShader() noexcept;
+static GLuint CreateObjectVertShader() noexcept;
 
 ///
 /// \return The paddle fragment shader. Unbelievable.
 ///
 static GLuint CreatePaddleFragShader() noexcept;
 
+///
+/// Loads the window size value into the corresponding uniform in the provided program.
+///
+static void LoadWinSizeUniform(GLuint program) noexcept;
+
 bool InitPaddleProgram() noexcept
 {
-    const auto kVert = CreatePaddleVertShader();
+    const auto kVert = CreateObjectVertShader();
     const auto kFrag = CreatePaddleFragShader();
 
     sPaddleProgram = Graphics::CreateProgramFromShaders(kVert, kFrag);
@@ -334,10 +356,15 @@ bool InitPaddleProgram() noexcept
     gl::DeleteShader(kVert);
     gl::DeleteShader(kFrag);
 
+    if (sPaddleProgram)
+    {
+        LoadWinSizeUniform(sPaddleProgram);
+    }
+
     return sPaddleProgram;
 }
 
-GLuint CreatePaddleVertShader() noexcept
+GLuint CreateObjectVertShader() noexcept
 {
     constexpr auto kSource =
     R"(
@@ -346,9 +373,15 @@ GLuint CreatePaddleVertShader() noexcept
 
     layout (location = 0) in vec2 aPosition;
 
+    uniform vec2 uWinSize;
+
+    uniform vec2 uSize;
+    uniform vec2 uPosition;
+
     void main()
     {
-        gl_Position = vec4(aPosition, 0.0, 1.0);
+        vec2 position = (aPosition * uSize) + uPosition;
+        gl_Position = vec4(position * 2.0 / uWinSize, 0.0, 1.0);
     }
 
     )";
@@ -373,6 +406,20 @@ GLuint CreatePaddleFragShader() noexcept
     )";
 
     return Graphics::CreateShaderFromSource(gl::FragmentShader, kSource);
+}
+
+void LoadWinSizeUniform(GLuint program) noexcept
+{
+    constexpr Vector2f kWinSize =
+    {
+        static_cast<float>(skWinSize.x),
+        static_cast<float>(skWinSize.y)
+    };
+
+    gl::UseProgram(program);
+
+    const auto kLocation = gl::GetUniformLocation(program, "uWinSize");
+    gl::Uniform2f(kLocation, kWinSize.x, kWinSize.y);
 }
 
 void CleanupPaddleProgram() noexcept
@@ -469,10 +516,30 @@ void OnUpdate() noexcept
     sRunning = Window::PollEvents();
 }
 
+///
+/// Loads the required uniforms and draws a quad.
+///
+static void DrawQuad(const Vector2f& size, const Vector2f& position, GLuint program) noexcept;
+
 void OnRender() noexcept
 {
-    Graphics::DrawMesh(sQuad, sPaddleProgram);
+    gl::Clear(gl::ColorBufferBit);
+
+    DrawQuad(Vector2f{ 20, 150 }, sPaddlePosition, sPaddleProgram);
     gl::SwapBuffers(sContext);
+}
+
+void DrawQuad(const Vector2f& size, const Vector2f& position, GLuint program) noexcept
+{
+    gl::UseProgram(program);
+
+    const auto kSizeLocation = gl::GetUniformLocation(program, "uSize");
+    const auto kPositionLocation = gl::GetUniformLocation(program, "uPosition");
+
+    gl::Uniform2f(kSizeLocation, size.x, size.y);
+    gl::Uniform2f(kPositionLocation, position.x, position.y);
+
+    Graphics::DrawMesh(sQuad);
 }
 
 void OnFinishRun() noexcept
