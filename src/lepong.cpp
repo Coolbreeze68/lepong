@@ -257,21 +257,8 @@ bool InitGameWindow() noexcept
     return sWindow;
 }
 
-static Vector2f sPaddlePosition = { 0, 0 };
-
-void OnKeyEvent(int key, bool pressed) noexcept
+void OnKeyEvent(LEPONG_MAYBE_UNUSED int key, LEPONG_MAYBE_UNUSED bool pressed) noexcept
 {
-    if (pressed)
-    {
-        if (key == VK_LEFT)
-        {
-            sPaddlePosition.x -= 50;
-        }
-        else if (key == VK_RIGHT)
-        {
-            sPaddlePosition.x += 50;
-        }
-    }
 }
 
 void CleanupGameWindow() noexcept
@@ -366,27 +353,7 @@ bool InitPaddleProgram() noexcept
 
 GLuint CreateObjectVertShader() noexcept
 {
-    constexpr auto kSource =
-    R"(
-
-    #version 330 core
-
-    layout (location = 0) in vec2 aPosition;
-
-    uniform vec2 uWinSize;
-
-    uniform vec2 uSize;
-    uniform vec2 uPosition;
-
-    void main()
-    {
-        vec2 position = (aPosition * uSize) + uPosition;
-        gl_Position = vec4(position * 2.0 / uWinSize, 0.0, 1.0);
-    }
-
-    )";
-
-    return Graphics::CreateShaderFromSource(gl::VertexShader, kSource);
+    return Graphics::MakeQuadVertexShader();
 }
 
 GLuint CreatePaddleFragShader() noexcept
@@ -516,30 +483,11 @@ void OnUpdate() noexcept
     sRunning = Window::PollEvents();
 }
 
-///
-/// Loads the required uniforms and draws a quad.
-///
-static void DrawQuad(const Vector2f& size, const Vector2f& position, GLuint program) noexcept;
-
 void OnRender() noexcept
 {
     gl::Clear(gl::ColorBufferBit);
-
-    DrawQuad(Vector2f{ 20, 150 }, sPaddlePosition, sPaddleProgram);
+    Graphics::DrawQuad(sQuad, Vector2f{ 50, 50 }, Vector2f{ 100, 100 }, sPaddleProgram);
     gl::SwapBuffers(sContext);
-}
-
-void DrawQuad(const Vector2f& size, const Vector2f& position, GLuint program) noexcept
-{
-    gl::UseProgram(program);
-
-    const auto kSizeLocation = gl::GetUniformLocation(program, "uSize");
-    const auto kPositionLocation = gl::GetUniformLocation(program, "uPosition");
-
-    gl::Uniform2f(kSizeLocation, size.x, size.y);
-    gl::Uniform2f(kPositionLocation, position.x, position.y);
-
-    Graphics::DrawMesh(sQuad);
 }
 
 void OnFinishRun() noexcept

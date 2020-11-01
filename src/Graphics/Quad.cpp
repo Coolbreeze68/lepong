@@ -61,4 +61,42 @@ Mesh MakeTextureReadyQuad() noexcept
     return MakeQuadWithLayout(kVertices, kVertexLayout);
 }
 
+GLuint MakeQuadVertexShader() noexcept
+{
+    constexpr auto kSource =
+    R"(
+
+    #version 330 core
+
+    layout (location = 0) in vec2 aPosition;
+
+    uniform vec2 uWinSize;
+
+    uniform vec2 uSize;
+    uniform vec2 uPosition;
+
+    void main()
+    {
+        vec2 position = (aPosition * uSize) + uPosition;
+        gl_Position = vec4(position * 2.0 / uWinSize - vec2(1.0, 1.0), 0.0, 1.0);
+    }
+
+    )";
+
+    return Graphics::CreateShaderFromSource(gl::VertexShader, kSource);
+}
+
+void DrawQuad(const Mesh& quad, const Vector2f& size, const Vector2f& position, GLuint program) noexcept
+{
+    gl::UseProgram(program);
+
+    const auto kSizeLocation = gl::GetUniformLocation(program, "uSize");
+    const auto kPositionLocation = gl::GetUniformLocation(program, "uPosition");
+
+    gl::Uniform2f(kSizeLocation, size.x, size.y);
+    gl::Uniform2f(kPositionLocation, position.x, position.y);
+
+    Graphics::DrawMesh(quad);
+}
+
 } // namespace lepong::Graphics
