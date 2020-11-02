@@ -21,6 +21,11 @@ void Ball::Render() const noexcept
     Graphics::DrawQuad(mMesh, Vector2f{ radius, radius }, position, mProgram);
 }
 
+void Ball::Update(float delta) noexcept
+{
+    GameObject::Update(delta);
+}
+
 GLuint MakeBallFragmentShader() noexcept
 {
     constexpr auto kSource =

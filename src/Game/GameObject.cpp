@@ -7,9 +7,9 @@
 namespace lepong
 {
 
-void GameObject::Update() noexcept
+void GameObject::Update(float delta) noexcept
 {
-    position += (moveDirection * moveSpeed);
+    position += moveDirection * (moveSpeed * delta);
 }
 
 } // namespace lepong

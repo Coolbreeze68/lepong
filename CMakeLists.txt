@@ -30,7 +30,7 @@ add_executable(lepong
     src/lepong.cpp
     src/Log.cpp
     src/Main.cpp
-    src/Window.cpp src/Game/Ball.cpp src/Game/Paddle.cpp inc/lepong/Game/Game.h)
+    src/Window.cpp src/Game/Ball.cpp src/Game/Paddle.cpp inc/lepong/Game/Game.h inc/lepong/Time/Time.h src/Time/Time.cpp)
 
 target_link_libraries(lepong
     User32

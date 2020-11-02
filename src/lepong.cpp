@@ -4,6 +4,8 @@
 
 #include <cstdint>
 
+#include <iostream> // Debug
+
 #include "lepong/Assert.h"
 #include "lepong/Attribute.h"
 #include "lepong/lepong.h"
@@ -14,6 +16,8 @@
 
 #include "lepong/Graphics/Graphics.h"
 #include "lepong/Graphics/Quad.h"
+
+#include "lepong/Time/Time.h"
 
 namespace lepong
 {
@@ -188,7 +192,8 @@ static constexpr Lifetime kSystemLifetimes[] =
     { Log::Init, Log::Cleanup },
     { Window::Init, Window::Cleanup },
     { Graphics::Init, Graphics::Cleanup },
-    { gl::Init, gl::Cleanup }
+    { gl::Init, gl::Cleanup },
+    { Time::Init, Time::Cleanup }
 };
 
 bool InitGameSystems() noexcept
@@ -494,14 +499,18 @@ void Run() noexcept
 ///
 static void LogContextSpecifications() noexcept;
 
+///
+/// Resets the game state.
+///
+static void ResetGameState() noexcept;
+
 void OnBeginRun() noexcept
 {
     Window::ShowWindow(sWindow);
     Window::SetWindowResizable(sWindow, false);
 
     LogContextSpecifications();
-
-    gl::UseProgram(sPaddleProgram);
+    ResetGameState();
 }
 
 #define LEPONG_LOG_GL_STRING(name) \
@@ -514,24 +523,49 @@ void LogContextSpecifications() noexcept
     LEPONG_LOG_GL_STRING(Renderer);
 }
 
-void OnUpdate() noexcept
+void ResetGameState() noexcept
 {
-    sRunning = Window::PollEvents();
+    sBall.position = { skWinSize.x / 2.0f, skWinSize.y / 2.0f };
 
     sPaddle1.position = { 50.0f, skWinSize.y / 2.0f };
     sPaddle2.position = { skWinSize.x - 50.0f, skWinSize.y / 2.0f };
+}
 
-    sBall.position = { skWinSize.x / 2.0f, skWinSize.y / 2.0f };
+///
+/// Returns the time elapsed since this function was last called.
+///
+LEPONG_NODISCARD float GetTimeDelta() noexcept;
+
+void OnUpdate() noexcept
+{
+    const auto kDelta = GetTimeDelta();
+    sRunning = Window::PollEvents();
+
+    sBall.Update(kDelta);
+
+    sPaddle1.Update(kDelta);
+    sPaddle2.Update(kDelta);
+}
+
+float GetTimeDelta() noexcept
+{
+    static auto sLastTime = 0.0f;
+
+    const auto kNow = Time::Get();
+    const auto kTimeDelta = kNow - sLastTime;
+    sLastTime = kNow;
+
+    return kTimeDelta;
 }
 
 void OnRender() noexcept
 {
     gl::Clear(gl::ColorBufferBit);
 
+    sBall.Render();
+
     sPaddle1.Render();
     sPaddle2.Render();
-
-    sBall.Render();
 
     gl::SwapBuffers(sContext);
 }

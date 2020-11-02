@@ -18,7 +18,7 @@ public:
     Vector2f moveDirection;
 
 public:
-    void Update() noexcept;
+    virtual void Update(float delta) noexcept;
 };
 
 } // namespace lepong

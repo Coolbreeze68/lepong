@@ -21,6 +21,7 @@ public:
     Paddle(const Vector2f& size, Graphics::Mesh& mesh, GLuint& program) noexcept;
 
 public:
+    void Update(float delta) noexcept override;
     void Render() const noexcept;
 
 private:

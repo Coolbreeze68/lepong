@@ -21,6 +21,11 @@ void Paddle::Render() const noexcept
     Graphics::DrawQuad(mMesh, size, position, mProgram);
 }
 
+void Paddle::Update(float delta) noexcept
+{
+    GameObject::Update(delta);
+}
+
 GLuint MakePaddleFragmentShader() noexcept
 {
     constexpr auto kSource =
