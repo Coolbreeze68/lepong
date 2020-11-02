@@ -1,5 +1,5 @@
 # lepong
-A fully featured Pong clone made for Windows from scratch.
+A bare bones Pong clone made for Windows from scratch.
 
 ## Building
 The following PowerShell code typically does the job. Or you could use the CMake GUI.
