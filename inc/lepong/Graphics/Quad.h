@@ -34,6 +34,11 @@ LEPONG_NODISCARD Mesh MakeTextureReadyQuad() noexcept;
 LEPONG_NODISCARD GLuint MakeQuadVertexShader() noexcept;
 
 ///
+/// Same as above but also passes texture data to the fragment shader.
+///
+LEPONG_NODISCARD GLuint MakeTextureReadyQuadVertexShader() noexcept;
+
+///
 /// Draws a quad using the provided program.<br>
 /// This function expects the program to be using a vertex shader created with <i>MakeQuadVertexShader</i>.<br>
 /// That is a lot of arguments, feels bad man.

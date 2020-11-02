@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <cmath>
+
 #include <type_traits>
 
 #include "lepong/Attribute.h"
@@ -34,6 +36,14 @@ public:
         return *this;
     }
 
+    constexpr Vector2& operator+=(const Vector2& other) noexcept
+    {
+        x += other.x;
+        y += other.y;
+
+        return *this;
+    }
+
     LEPONG_NODISCARD constexpr Vector2 operator*(Scalar s) const noexcept
     {
         return { x * s, y * s };
@@ -43,10 +53,27 @@ public:
     {
         return { x / s, y / s };
     }
+
+public:
+    LEPONG_NODISCARD constexpr float Mag() const noexcept
+    {
+        const auto kSqMag = (float)SquareMag();
+        return sqrtf(kSqMag);
+    }
+
+    LEPONG_NODISCARD constexpr Scalar SquareMag() const noexcept
+    {
+        return (x * x) + (y * y);
+    }
 };
 
 using Vector2f = Vector2<float>;
 using Vector2i = Vector2<int>;
 using Vector2u = Vector2<unsigned>;
+
+LEPONG_NODISCARD constexpr Vector2f Normalize(const Vector2f& v) noexcept
+{
+    return v / v.Mag();
+}
 
 } // namespace lepong

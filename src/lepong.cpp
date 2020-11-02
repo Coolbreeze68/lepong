@@ -4,13 +4,13 @@
 
 #include <cstdint>
 
-#include <iostream> // Debug
-
 #include "lepong/Assert.h"
 #include "lepong/Attribute.h"
 #include "lepong/lepong.h"
 #include "lepong/Log.h"
 #include "lepong/Window.h"
+
+#include "lepong/Game/Game.h"
 
 #include "lepong/Graphics/Graphics.h"
 #include "lepong/Graphics/Quad.h"
@@ -26,7 +26,21 @@ static HWND sWindow;
 static gl::Context sContext;
 
 static GLuint sPaddleProgram;
+static GLuint sBallProgram;
+
 static Graphics::Mesh sQuad;
+static Graphics::Mesh sTextureReadyQuad;
+
+// Ball.
+static constexpr float skBallSize = 40.0f;
+
+static Ball sBall{ skBallSize, sTextureReadyQuad, sBallProgram };
+
+// Paddles.
+static constexpr Vector2f skPaddleSize = { 25.0f, 150.0f };
+
+static Paddle sPaddle1{ skPaddleSize, sQuad, sPaddleProgram };
+static Paddle sPaddle2{ skPaddleSize, sQuad, sPaddleProgram };
 
 ///
 /// A class holding the init and cleanup functions of any item.
@@ -295,6 +309,16 @@ LEPONG_NODISCARD static bool InitPaddleProgram() noexcept;
 static void CleanupPaddleProgram() noexcept;
 
 ///
+/// I wonder what this does.
+///
+LEPONG_NODISCARD static bool InitBallProgram() noexcept;
+
+///
+/// Epic.
+///
+static void CleanupBallProgram() noexcept;
+
+///
 /// Oh boy.
 ///
 LEPONG_NODISCARD static bool InitQuad() noexcept;
@@ -305,12 +329,24 @@ LEPONG_NODISCARD static bool InitQuad() noexcept;
 static void CleanupQuad() noexcept;
 
 ///
+/// Let's go.
+///
+LEPONG_NODISCARD static bool InitTextureReadyQuad() noexcept;
+
+///
+/// Where is my super suit?
+///
+static void CleanupTextureReadyQuad() noexcept;
+
+///
 /// All the graphics resource lifetimes.
 ///
 static constexpr Lifetime kGraphicsResourceLifetimes[] =
 {
     { InitPaddleProgram, CleanupPaddleProgram },
-    { InitQuad, CleanupQuad }
+    { InitBallProgram, CleanupBallProgram },
+    { InitQuad, CleanupQuad },
+    { InitTextureReadyQuad, CleanupTextureReadyQuad },
 };
 
 bool InitGraphicsResources() noexcept
@@ -319,24 +355,14 @@ bool InitGraphicsResources() noexcept
 }
 
 ///
-/// \return A generic object vertex shader.
-///
-static GLuint CreateObjectVertShader() noexcept;
-
-///
-/// \return The paddle fragment shader. Unbelievable.
-///
-static GLuint CreatePaddleFragShader() noexcept;
-
-///
 /// Loads the window size value into the corresponding uniform in the provided program.
 ///
 static void LoadWinSizeUniform(GLuint program) noexcept;
 
 bool InitPaddleProgram() noexcept
 {
-    const auto kVert = CreateObjectVertShader();
-    const auto kFrag = CreatePaddleFragShader();
+    const auto kVert = Graphics::MakeQuadVertexShader();
+    const auto kFrag = MakePaddleFragmentShader();
 
     sPaddleProgram = Graphics::CreateProgramFromShaders(kVert, kFrag);
 
@@ -349,30 +375,6 @@ bool InitPaddleProgram() noexcept
     }
 
     return sPaddleProgram;
-}
-
-GLuint CreateObjectVertShader() noexcept
-{
-    return Graphics::MakeQuadVertexShader();
-}
-
-GLuint CreatePaddleFragShader() noexcept
-{
-    constexpr auto kSource =
-    R"(
-
-    #version 330 core
-
-    out vec4 FragColor;
-
-    void main()
-    {
-        FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-    }
-
-    )";
-
-    return Graphics::CreateShaderFromSource(gl::FragmentShader, kSource);
 }
 
 void LoadWinSizeUniform(GLuint program) noexcept
@@ -394,6 +396,29 @@ void CleanupPaddleProgram() noexcept
     gl::DeleteProgram(sPaddleProgram);
 }
 
+bool InitBallProgram() noexcept
+{
+    const auto kVert = Graphics::MakeTextureReadyQuadVertexShader();
+    const auto kFrag = MakeBallFragmentShader();
+
+    sBallProgram = Graphics::CreateProgramFromShaders(kVert, kFrag);
+
+    gl::DeleteShader(kVert);
+    gl::DeleteShader(kFrag);
+
+    if (sBallProgram)
+    {
+        LoadWinSizeUniform(sBallProgram);
+    }
+
+    return sBallProgram;
+}
+
+void CleanupBallProgram() noexcept
+{
+    gl::DeleteProgram(sBallProgram);
+}
+
 bool InitQuad() noexcept
 {
     sQuad = Graphics::MakeSimpleQuad();
@@ -403,6 +428,17 @@ bool InitQuad() noexcept
 void CleanupQuad() noexcept
 {
     Graphics::DestroyMesh(sQuad);
+}
+
+bool InitTextureReadyQuad() noexcept
+{
+    sTextureReadyQuad = Graphics::MakeTextureReadyQuad();
+    return sTextureReadyQuad.IsValid();
+}
+
+void CleanupTextureReadyQuad() noexcept
+{
+    Graphics::DestroyMesh(sTextureReadyQuad);
 }
 
 void CleanupGraphicsResources() noexcept
@@ -481,12 +517,22 @@ void LogContextSpecifications() noexcept
 void OnUpdate() noexcept
 {
     sRunning = Window::PollEvents();
+
+    sPaddle1.position = { 50.0f, skWinSize.y / 2.0f };
+    sPaddle2.position = { skWinSize.x - 50.0f, skWinSize.y / 2.0f };
+
+    sBall.position = { skWinSize.x / 2.0f, skWinSize.y / 2.0f };
 }
 
 void OnRender() noexcept
 {
     gl::Clear(gl::ColorBufferBit);
-    Graphics::DrawQuad(sQuad, Vector2f{ 50, 50 }, Vector2f{ 100, 100 }, sPaddleProgram);
+
+    sPaddle1.Render();
+    sPaddle2.Render();
+
+    sBall.Render();
+
     gl::SwapBuffers(sContext);
 }
 

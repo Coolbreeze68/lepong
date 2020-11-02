@@ -39,8 +39,7 @@ Mesh MakeQuadWithLayout(const Vertices& vertices, const VertexLayout& vertexLayo
 
     if (newMesh.va)
     {
-        const VertexLayout kVertexLayout = { 2 };
-        SetMeshVertexLayout(newMesh, kVertexLayout);
+        SetMeshVertexLayout(newMesh, vertexLayout);
     }
 
     return newMesh;
@@ -79,6 +78,35 @@ GLuint MakeQuadVertexShader() noexcept
     {
         vec2 position = (aPosition * uSize) + uPosition;
         gl_Position = vec4(position * 2.0 / uWinSize - vec2(1.0, 1.0), 0.0, 1.0);
+    }
+
+    )";
+
+    return Graphics::CreateShaderFromSource(gl::VertexShader, kSource);
+}
+
+GLuint MakeTextureReadyQuadVertexShader() noexcept
+{
+    constexpr auto kSource =
+    R"(
+
+    #version 330 core
+
+    layout (location = 0) in vec2 aPosition;
+    layout (location = 1) in vec2 aTexturePosition;
+
+    out vec2 vTexturePosition;
+
+    uniform vec2 uWinSize;
+
+    uniform vec2 uSize;
+    uniform vec2 uPosition;
+
+    void main()
+    {
+        vec2 position = (aPosition * uSize) + uPosition;
+        gl_Position = vec4(position * 2.0 / uWinSize - vec2(1.0), 0.0, 1.0);
+        vTexturePosition = aTexturePosition;
     }
 
     )";
