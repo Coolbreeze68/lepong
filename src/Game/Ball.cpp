@@ -37,6 +37,16 @@ bool Ball::CollideAgainst(const Paddle& paddle) noexcept
 {
     auto collides = false;
 
+    // If the ball is moving toward the paddle, the sign if its x direction is opposite to
+    // the way the paddle is facing.
+    const auto kMovingToward = (moveDirection.x * paddle.front) < 0.0f;
+
+    if (!kMovingToward)
+    {
+        // This avoids potential collision jitter.
+        return false;
+    }
+
     const auto kInRangeY =
         position.y < (paddle.position.y + paddle.size.y / 2.0f) &&
         position.y > (paddle.position.y - paddle.size.y / 2.0f);
