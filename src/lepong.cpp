@@ -3,17 +3,17 @@
 //
 
 #include <cstdint>
+#include <ctime>
 
 #include "lepong/Assert.h"
-#include "lepong/Attribute.h"
 #include "lepong/lepong.h"
-#include "lepong/Log.h"
 #include "lepong/Window.h"
 
 #include "lepong/Game/Game.h"
 
-#include "lepong/Graphics/Graphics.h"
 #include "lepong/Graphics/Quad.h"
+
+#include "lepong/Math/Math.h"
 
 #include "lepong/Time/Time.h"
 
@@ -32,6 +32,10 @@ static GLuint sBallProgram;
 
 static Graphics::Mesh sQuad;
 static Graphics::Mesh sTextureReadyQuad;
+
+// Game state.
+static bool sPlaying = false;
+static unsigned sPlayerScores[] = { 0u, 0u };
 
 // Ball.
 static constexpr float skBallRadius = 20.0f;
@@ -274,8 +278,104 @@ bool InitGameWindow() noexcept
     return sWindow;
 }
 
-void OnKeyEvent(LEPONG_MAYBE_UNUSED int key, LEPONG_MAYBE_UNUSED bool pressed) noexcept
+///
+/// What does this do?
+///
+static void OnKeyUp(int key) noexcept;
+
+///
+/// Huh.
+///
+static void OnKeyDown(int key) noexcept;
+
+///
+/// Sets the ball's direction to a random diagonal direction.
+///
+static void LaunchBall() noexcept;
+
+void OnKeyEvent(int key, bool pressed) noexcept
 {
+    if (sPlaying)
+    {
+        if (pressed)
+        {
+            OnKeyDown(key);
+        }
+        else
+        {
+            OnKeyUp(key);
+        }
+    }
+    else if (pressed && key == VK_SPACE)
+    {
+        sPlaying = true;
+        LaunchBall();
+    }
+}
+
+// Ugly input code below.
+
+static constexpr int skP2Up = VK_UP;
+static constexpr int skP2Down = VK_DOWN;
+static constexpr int skP1Up = 'W';
+static constexpr int skP1Down = 'S';
+
+void OnKeyUp(int key) noexcept
+{
+    switch (key)
+    {
+    case skP2Up:
+        sPaddle2.OnMoveUpReleased();
+        break;
+
+    case skP2Down:
+        sPaddle2.OnMoveDownReleased();
+        break;
+
+    case skP1Up:
+        sPaddle1.OnMoveUpReleased();
+        break;
+
+    case skP1Down:
+        sPaddle1.OnMoveDownReleased();
+        break;
+
+    default: break;
+    }
+}
+
+void OnKeyDown(int key) noexcept
+{
+    switch (key)
+    {
+    case skP2Up:
+        sPaddle2.OnMoveUpPressed();
+        break;
+
+    case skP2Down:
+        sPaddle2.OnMoveDownPressed();
+        break;
+
+    case skP1Up:
+        sPaddle1.OnMoveUpPressed();
+        break;
+
+    case skP1Down:
+        sPaddle1.OnMoveDownPressed();
+        break;
+
+    default: break;
+    }
+}
+
+void LaunchBall() noexcept
+{
+    sBall.moveSpeed = Ball::skDefaultMoveSpeed;
+
+    const Vector2i kMoveSign = { RandomSign(), RandomSign() };
+    sBall.moveDirection = { static_cast<float>(kMoveSign.x), static_cast<float>(kMoveSign.y) };
+
+    sBall.moveDirection = Normalize(sBall.moveDirection);
 }
 
 void CleanupGameWindow() noexcept
@@ -358,26 +458,38 @@ bool InitGraphicsResources() noexcept
 }
 
 ///
+/// Creates a program from the provided shaders and loads the <b>uWinSize</b> uniform.<br>
+/// The provided shaders are then destroyed.
+///
+LEPONG_NODISCARD static GLuint CreateProgramFromShadersWithWinSizeUniform(GLuint vertex, GLuint fragment) noexcept;
+
+bool InitPaddleProgram() noexcept
+{
+    sPaddleProgram = CreateProgramFromShadersWithWinSizeUniform(
+        Graphics::MakeQuadVertexShader(), MakePaddleFragmentShader()
+    );
+
+    return sPaddleProgram;
+}
+
+///
 /// Loads the window size value into the corresponding uniform in the provided program.
 ///
 static void LoadWinSizeUniform(GLuint program) noexcept;
 
-bool InitPaddleProgram() noexcept
+GLuint CreateProgramFromShadersWithWinSizeUniform(GLuint vertex, GLuint fragment) noexcept
 {
-    const auto kVert = Graphics::MakeQuadVertexShader();
-    const auto kFrag = MakePaddleFragmentShader();
+    const auto kProgram = Graphics::CreateProgramFromShaders(vertex, fragment);
 
-    sPaddleProgram = Graphics::CreateProgramFromShaders(kVert, kFrag);
+    gl::DeleteShader(vertex);
+    gl::DeleteShader(fragment);
 
-    gl::DeleteShader(kVert);
-    gl::DeleteShader(kFrag);
-
-    if (sPaddleProgram)
+    if (kProgram)
     {
-        LoadWinSizeUniform(sPaddleProgram);
+        LoadWinSizeUniform(kProgram);
     }
 
-    return sPaddleProgram;
+    return kProgram;
 }
 
 void LoadWinSizeUniform(GLuint program) noexcept
@@ -401,18 +513,9 @@ void CleanupPaddleProgram() noexcept
 
 bool InitBallProgram() noexcept
 {
-    const auto kVert = Graphics::MakeTextureReadyQuadVertexShader();
-    const auto kFrag = MakeBallFragmentShader();
-
-    sBallProgram = Graphics::CreateProgramFromShaders(kVert, kFrag);
-
-    gl::DeleteShader(kVert);
-    gl::DeleteShader(kFrag);
-
-    if (sBallProgram)
-    {
-        LoadWinSizeUniform(sBallProgram);
-    }
+    sBallProgram = CreateProgramFromShadersWithWinSizeUniform(
+        Graphics::MakeTextureReadyQuadVertexShader(), MakeBallFragmentShader()
+    );
 
     return sBallProgram;
 }
@@ -515,16 +618,19 @@ void OnBeginRun() noexcept
     LogContextSpecifications();
     ResetGameState();
     PositionPaddlesOnTerrain();
+
+    const auto kCurrentTime = (unsigned)time(nullptr);
+    srand(kCurrentTime);
 }
 
 #define LEPONG_LOG_GL_STRING(name) \
-    Log::Log(reinterpret_cast<const char*>(gl::GetString(gl::name)))
+    Log::Log(reinterpret_cast<const char*>(gl::GetString(name)))
 
 void LogContextSpecifications() noexcept
 {
-    LEPONG_LOG_GL_STRING(Version);
-    LEPONG_LOG_GL_STRING(Vendor);
-    LEPONG_LOG_GL_STRING(Renderer);
+    LEPONG_LOG_GL_STRING(gl::Version);
+    LEPONG_LOG_GL_STRING(gl::Vendor);
+    LEPONG_LOG_GL_STRING(gl::Renderer);
 }
 
 void ResetGameState() noexcept
@@ -534,9 +640,7 @@ void ResetGameState() noexcept
     sPaddle1.Reset(skWinSize);
     sPaddle2.Reset(skWinSize);
 
-    // Temporary.
-    sBall.moveSpeed = 200.0f;
-    sBall.moveDirection = { 1.0f, 0.0f };
+    sPlaying = false;
 }
 
 void PositionPaddlesOnTerrain() noexcept
@@ -559,13 +663,13 @@ static void CheckBallSideCollision() noexcept;
 
 void OnUpdate() noexcept
 {
-    const auto kDeltaT = GetTimeDelta();
+    const auto kDelta = GetTimeDelta();
     sRunning = Window::PollEvents();
 
-    sBall.Update(kDeltaT);
+    sBall.Update(kDelta);
 
-    sPaddle1.Update(kDeltaT, skWinSize);
-    sPaddle2.Update(kDeltaT, skWinSize);
+    sPaddle1.Update(kDelta, skWinSize);
+    sPaddle2.Update(kDelta, skWinSize);
 
     sBall.CollideAgainstTerrain(skWinSize);
 
@@ -590,15 +694,27 @@ float GetTimeDelta() noexcept
     return kTimeDelta;
 }
 
+///
+/// Gives the point to the player corresponding to the provided side.<br>
+/// The player who won the point is the player opposite to the provided side.
+///
+static void UpdateScores(Side lostSide) noexcept;
+
 void CheckBallSideCollision() noexcept
 {
     const auto kSide = sBall.GetTouchingSide(skWinSize);
 
     if (kSide != Side::None)
     {
-        // Give the point to the player who last touched the ball.
+        UpdateScores(kSide);
         ResetGameState();
     }
+}
+
+void UpdateScores(Side lostSide) noexcept
+{
+    const auto kScoreIndex = 1u - static_cast<unsigned>(lostSide);
+    ++sPlayerScores[kScoreIndex];
 }
 
 void OnRender() noexcept

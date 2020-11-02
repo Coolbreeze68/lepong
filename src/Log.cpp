@@ -5,7 +5,6 @@
 #include <cstdio>
 
 #include "lepong/Assert.h"
-#include "lepong/Log.h"
 
 namespace lepong::Log
 {

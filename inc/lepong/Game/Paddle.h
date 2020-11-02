@@ -15,6 +15,9 @@ namespace lepong
 class Paddle : public GameObject
 {
 public:
+    static constexpr auto skDefaultMoveSpeed = 300.0f;
+
+public:
     Vector2f size;
 
     // The x direction the paddle is facing.
@@ -32,6 +35,12 @@ public:
     /// Resets the paddle to its default state.
     ///
     void Reset(const Vector2i& winSize) noexcept;
+
+public:
+    void OnMoveUpPressed() noexcept;
+    void OnMoveDownPressed() noexcept;
+    void OnMoveUpReleased() noexcept;
+    void OnMoveDownReleased() noexcept;
 
 private:
     Graphics::Mesh& mMesh;

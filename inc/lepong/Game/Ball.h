@@ -23,6 +23,9 @@ enum class Side
 class Ball : public GameObject
 {
 public:
+    static constexpr auto skDefaultMoveSpeed = 200.0f;
+
+public:
     float radius;
 
 public:
@@ -57,6 +60,8 @@ private:
     GLuint& mProgram;
 
 private:
+    LEPONG_NODISCARD bool IsBehind(const Paddle& paddle) const noexcept;
+    bool DoCollideWith(const Paddle& paddle) noexcept;
     void OnPaddleCollision(const Paddle& paddle) noexcept;
 };
 

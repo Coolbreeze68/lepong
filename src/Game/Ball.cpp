@@ -35,8 +35,6 @@ void Ball::CollideAgainstTerrain(const Vector2i& winSize) noexcept
 
 bool Ball::CollideAgainst(const Paddle& paddle) noexcept
 {
-    auto collides = false;
-
     // If the ball is moving toward the paddle, the sign of its x direction is opposite to
     // the way the paddle is facing.
     const auto kMovingToward = (moveDirection.x * paddle.front) < 0.0f;
@@ -47,31 +45,16 @@ bool Ball::CollideAgainst(const Paddle& paddle) noexcept
         return false;
     }
 
-    const auto kInRangeY =
-        position.y < (paddle.position.y + paddle.size.y / 2.0f) &&
-        position.y > (paddle.position.y - paddle.size.y / 2.0f);
+    // Ignore cases where the ball is behind the paddle.
+    const auto kBehind = IsBehind(paddle);
 
-    if (kInRangeY)
+    if (kBehind)
     {
-        const auto kRadiusSquared = radius * radius;
-
-        const Vector2f kCenterProjectedOnPaddle = { paddle.position.x + (paddle.size.x / 2.0f) * paddle.front, position.y };
-        const Vector2f kPaddleToBall = position - kCenterProjectedOnPaddle;
-
-        if (kPaddleToBall.SquareMag() < kRadiusSquared)
-        {
-            collides = true;
-            OnPaddleCollision(paddle);
-        }
+        // This avoids cases where the ball still goes toward the player goal after bouncing.
+        return false;
     }
 
-    return collides;
-}
-
-void Ball::OnPaddleCollision(const Paddle& paddle) noexcept
-{
-    moveSpeed += 50.0f;
-    moveDirection = Normalize(position - paddle.position);
+    return DoCollideWith(paddle);
 }
 
 Side Ball::GetTouchingSide(const Vector2i& winSize) const noexcept
@@ -96,6 +79,58 @@ void Ball::Reset(const Vector2i& winSize) noexcept
 
     moveSpeed = 0.0f;
     moveDirection = { 0.0f, 0.0f };
+}
+
+bool Ball::IsBehind(const Paddle& paddle) const noexcept
+{
+    // We don't use the whole radius to avoid the ball from going through the paddle.
+    // This means we don't cover all possible situations but this is good enough.
+    const auto kOuterEdge = position.x + (radius * 0.25f) * -paddle.front;
+
+    const auto kPaddleFrontEdge = paddle.position.x + (paddle.size.x / 2.0f) * paddle.front;
+
+    if (paddle.front > 0.0f)
+    {
+        return kOuterEdge < kPaddleFrontEdge;
+    }
+    else
+    {
+        return kOuterEdge > kPaddleFrontEdge;
+    }
+}
+
+bool Ball::DoCollideWith(const Paddle& paddle) noexcept
+{
+    auto collides = false;
+
+    // An extra paddle collision zone. Makes gameplay less punishing.
+    const auto kPaddleGraceZone = paddle.size.y * 0.1f;
+
+    const auto kInRangeY =
+        position.y < (paddle.position.y + paddle.size.y / 2.0f + kPaddleGraceZone) &&
+        position.y > (paddle.position.y - paddle.size.y / 2.0f - kPaddleGraceZone);
+
+    if (kInRangeY)
+    {
+        const auto kRadiusSquared = radius * radius;
+
+        const Vector2f kCenterProjectedOnPaddle = { paddle.position.x + (paddle.size.x / 2.0f) * paddle.front, position.y };
+        const Vector2f kPaddleToBall = position - kCenterProjectedOnPaddle;
+
+        if (kPaddleToBall.SquareMag() < kRadiusSquared)
+        {
+            collides = true;
+            OnPaddleCollision(paddle);
+        }
+    }
+
+    return collides;
+}
+
+void Ball::OnPaddleCollision(const Paddle& paddle) noexcept
+{
+    moveSpeed += 50.0f;
+    moveDirection = Normalize(position - paddle.position);
 }
 
 GLuint MakeBallFragmentShader() noexcept

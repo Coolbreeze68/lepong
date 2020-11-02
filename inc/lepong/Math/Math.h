@@ -4,7 +4,16 @@
 
 #pragma once
 
-#include "Matrix4.h"
-#include "Transform.h"
-#include "Vector4.h"
+#include "lepong/Attribute.h"
+
 #include "Vector2.h"
+
+namespace lepong
+{
+
+///
+/// \return Randomly <code>1</code> or <code>-1</code>.
+///
+LEPONG_NODISCARD int RandomSign() noexcept;
+
+} // namespace lepong

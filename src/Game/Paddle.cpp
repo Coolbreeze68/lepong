@@ -51,6 +51,36 @@ void Paddle::Reset(const Vector2i& winSize) noexcept
     moveDirection = { 0.0f, 0.0f };
 }
 
+void Paddle::OnMoveUpPressed() noexcept
+{
+    moveSpeed = skDefaultMoveSpeed;
+    moveDirection.y = 1.0f;
+}
+
+void Paddle::OnMoveDownPressed() noexcept
+{
+    moveSpeed = skDefaultMoveSpeed;
+    moveDirection.y = -1.0f;
+}
+
+void Paddle::OnMoveUpReleased() noexcept
+{
+    if (moveDirection.y > 0.0f)
+    {
+        moveSpeed = 0.0f;
+        moveDirection.y = 0.0f;
+    }
+}
+
+void Paddle::OnMoveDownReleased() noexcept
+{
+    if (moveDirection.y < 0.0f)
+    {
+        moveSpeed = 0.0f;
+        moveDirection.y = 0.0f;
+    }
+}
+
 GLuint MakePaddleFragmentShader() noexcept
 {
     constexpr auto kSource =

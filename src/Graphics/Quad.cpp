@@ -35,14 +35,14 @@ Mesh MakeQuadWithLayout(const Vertices& vertices, const VertexLayout& vertexLayo
         0, 2, 3
     };
 
-    Mesh newMesh = MakeMesh(vertices, kIndices);
+    const auto kNewMesh = MakeMesh(vertices, kIndices);
 
-    if (newMesh.va)
+    if (kNewMesh.va)
     {
-        SetMeshVertexLayout(newMesh, vertexLayout);
+        SetMeshVertexLayout(kNewMesh, vertexLayout);
     }
 
-    return newMesh;
+    return kNewMesh;
 }
 
 Mesh MakeTextureReadyQuad() noexcept
@@ -116,12 +116,15 @@ GLuint MakeTextureReadyQuadVertexShader() noexcept
 
 void DrawQuad(const Mesh& quad, const Vector2f& size, const Vector2f& position, GLuint program) noexcept
 {
+    // Getting the uniform location each time we draw is definitely slower,
+    // but this is Pong so who cares.
+
     gl::UseProgram(program);
 
     const auto kSizeLocation = gl::GetUniformLocation(program, "uSize");
-    const auto kPositionLocation = gl::GetUniformLocation(program, "uPosition");
-
     gl::Uniform2f(kSizeLocation, size.x, size.y);
+
+    const auto kPositionLocation = gl::GetUniformLocation(program, "uPosition");
     gl::Uniform2f(kPositionLocation, position.x, position.y);
 
     Graphics::DrawMesh(quad);
