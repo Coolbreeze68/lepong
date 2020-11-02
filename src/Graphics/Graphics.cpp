@@ -9,7 +9,6 @@
 #include "LoadOpenGLFunction.h"
 
 #include "lepong/Assert.h"
-#include "lepong/Log.h"
 
 #include "lepong/Graphics/Graphics.h"
 

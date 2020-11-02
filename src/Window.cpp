@@ -5,7 +5,6 @@
 #include <Windows.h>
 
 #include "lepong/Assert.h"
-#include "lepong/Attribute.h"
 #include "lepong/Window.h"
 
 namespace lepong::Window
