@@ -43,14 +43,10 @@ bool Ball::CollideAgainst(const Paddle& paddle) noexcept
 
     if (kInRangeY)
     {
-        const Vector2f kBallProjectedOnPaddle =
-        {
-            paddle.position.x + (paddle.size.x / 2.0f) * paddle.front,
-            position.y
-        };
-
-        const Vector2f kPaddleToBall = position - kBallProjectedOnPaddle;
         const auto kRadiusSquared = radius * radius;
+
+        const Vector2f kCenterProjectedOnPaddle = { paddle.position.x + (paddle.size.x / 2.0f) * paddle.front, position.y };
+        const Vector2f kPaddleToBall = position - kCenterProjectedOnPaddle;
 
         if (kPaddleToBall.SquareMag() < kRadiusSquared)
         {
