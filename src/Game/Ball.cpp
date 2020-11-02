@@ -22,11 +22,6 @@ void Ball::Render() const noexcept
     Graphics::DrawQuad(mMesh, Vector2f{ kDiameter, kDiameter }, position, mProgram);
 }
 
-void Ball::Update(float delta) noexcept
-{
-    GameObject::Update(delta);
-}
-
 void Ball::CollideAgainstTerrain(const Vector2i& winSize) noexcept
 {
     const auto kCollidesTop = (position.y > static_cast<float>(winSize.y) - radius) && (moveDirection.y > 0);
@@ -38,9 +33,63 @@ void Ball::CollideAgainstTerrain(const Vector2i& winSize) noexcept
     }
 }
 
-void Ball::CollideAgainst(const Paddle& paddle) noexcept
+bool Ball::CollideAgainst(const Paddle& paddle) noexcept
 {
+    auto collides = false;
 
+    const auto kInRangeY =
+        position.y < (paddle.position.y + paddle.size.y / 2.0f) &&
+        position.y > (paddle.position.y - paddle.size.y / 2.0f);
+
+    if (kInRangeY)
+    {
+        const Vector2f kBallProjectedOnPaddle =
+        {
+            paddle.position.x + (paddle.size.x / 2.0f) * paddle.front,
+            position.y
+        };
+
+        const Vector2f kPaddleToBall = position - kBallProjectedOnPaddle;
+        const auto kRadiusSquared = radius * radius;
+
+        if (kPaddleToBall.SquareMag() < kRadiusSquared)
+        {
+            collides = true;
+            OnPaddleCollision(paddle);
+        }
+    }
+
+    return collides;
+}
+
+void Ball::OnPaddleCollision(const Paddle& paddle) noexcept
+{
+    moveSpeed += 50.0f;
+    moveDirection = Normalize(position - paddle.position);
+}
+
+Side Ball::GetTouchingSide(const Vector2i& winSize) const noexcept
+{
+    Side side = Side::None;
+
+    if (position.x < radius)
+    {
+        side = Side::Player1;
+    }
+    else if (position.x > static_cast<float>(winSize.x) - radius)
+    {
+        side = Side::Player2;
+    }
+
+    return side;
+}
+
+void Ball::Reset(const Vector2i& winSize) noexcept
+{
+    position = { winSize.x / 2.0f, winSize.y / 2.0f };
+
+    moveSpeed = 0.0f;
+    moveDirection = { 0.0f, 0.0f };
 }
 
 GLuint MakeBallFragmentShader() noexcept

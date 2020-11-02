@@ -24,12 +24,21 @@ public:
     Paddle(const Vector2f& size, float front, Graphics::Mesh& mesh, GLuint& program) noexcept;
 
 public:
-    void Update(float delta) noexcept override;
+    void Update(float delta, const Vector2i& winSize) noexcept;
     void Render() const noexcept;
+
+public:
+    ///
+    /// Resets the paddle to its default state.
+    ///
+    void Reset(const Vector2i& winSize) noexcept;
 
 private:
     Graphics::Mesh& mMesh;
     GLuint& mProgram;
+
+private:
+    void CollideAgainstTerrain(const Vector2i& winSize, const Vector2f& postUpdatePosition) noexcept;
 };
 
 ///

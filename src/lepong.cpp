@@ -4,8 +4,6 @@
 
 #include <cstdint>
 
-#include <iostream> // Debug
-
 #include "lepong/Assert.h"
 #include "lepong/Attribute.h"
 #include "lepong/lepong.h"
@@ -504,6 +502,11 @@ static void LogContextSpecifications() noexcept;
 ///
 static void ResetGameState() noexcept;
 
+///
+/// Properly sets the paddle positions on the terrain.
+///
+static void PositionPaddlesOnTerrain() noexcept;
+
 void OnBeginRun() noexcept
 {
     Window::ShowWindow(sWindow);
@@ -511,6 +514,7 @@ void OnBeginRun() noexcept
 
     LogContextSpecifications();
     ResetGameState();
+    PositionPaddlesOnTerrain();
 }
 
 #define LEPONG_LOG_GL_STRING(name) \
@@ -525,34 +529,54 @@ void LogContextSpecifications() noexcept
 
 void ResetGameState() noexcept
 {
-    sBall.position = { skWinSize.x / 2.0f, skWinSize.y / 2.0f };
+    sBall.Reset(skWinSize);
 
-    sPaddle1.position = { 50.0f, skWinSize.y / 2.0f };
-    sPaddle2.position = { skWinSize.x - 50.0f, skWinSize.y / 2.0f };
+    sPaddle1.Reset(skWinSize);
+    sPaddle2.Reset(skWinSize);
 
-    sBall.moveSpeed = 500.0f;
-    sBall.moveDirection = { 0.0f, 1.0f };
+    // Temporary.
+    sBall.moveSpeed = 200.0f;
+    sBall.moveDirection = { 1.0f, 0.0f };
+}
+
+void PositionPaddlesOnTerrain() noexcept
+{
+    const auto kBorderOffset = 50.0f;
+
+    sPaddle1.position.x = kBorderOffset;
+    sPaddle2.position.x = skWinSize.x - kBorderOffset;
 }
 
 ///
 /// Returns the time elapsed since this function was last called.
 ///
-LEPONG_NODISCARD float GetTimeDelta() noexcept;
+LEPONG_NODISCARD static float GetTimeDelta() noexcept;
+
+///
+/// Handles ball collision with terrain sides.
+///
+static void CheckBallSideCollision() noexcept;
 
 void OnUpdate() noexcept
 {
-    const auto kDelta = GetTimeDelta();
+    const auto kDeltaT = GetTimeDelta();
     sRunning = Window::PollEvents();
 
-    sBall.Update(kDelta);
+    sBall.Update(kDeltaT);
 
-    sPaddle1.Update(kDelta);
-    sPaddle2.Update(kDelta);
+    sPaddle1.Update(kDeltaT, skWinSize);
+    sPaddle2.Update(kDeltaT, skWinSize);
 
     sBall.CollideAgainstTerrain(skWinSize);
 
-    sBall.CollideAgainst(sPaddle1);
-    sBall.CollideAgainst(sPaddle2);
+    const auto kCollides =
+        sBall.CollideAgainst(sPaddle1) ||
+        sBall.CollideAgainst(sPaddle2);
+
+    if (!kCollides)
+    {
+        CheckBallSideCollision();
+    }
 }
 
 float GetTimeDelta() noexcept
@@ -564,6 +588,17 @@ float GetTimeDelta() noexcept
     sLastTime = kNow;
 
     return kTimeDelta;
+}
+
+void CheckBallSideCollision() noexcept
+{
+    const auto kSide = sBall.GetTouchingSide(skWinSize);
+
+    if (kSide != Side::None)
+    {
+        // Give the point to the player who last touched the ball.
+        ResetGameState();
+    }
 }
 
 void OnRender() noexcept

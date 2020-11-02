@@ -59,6 +59,11 @@ public:
         return { -x, -y };
     }
 
+    LEPONG_NODISCARD constexpr Vector2 operator-(const Vector2& other) const noexcept
+    {
+        return { x - other.x, y - other.y };
+    }
+
 public:
     LEPONG_NODISCARD constexpr float Mag() const noexcept
     {

@@ -13,6 +13,13 @@
 namespace lepong
 {
 
+enum class Side
+{
+    None    = -1,
+    Player1 =  0,
+    Player2 =  1
+};
+
 class Ball : public GameObject
 {
 public:
@@ -22,16 +29,35 @@ public:
     Ball(float radius, Graphics::Mesh& mesh, GLuint& program) noexcept;
 
 public:
-    void Update(float delta) noexcept override;
     void Render() const noexcept;
 
 public:
     void CollideAgainstTerrain(const Vector2i& winSize) noexcept;
-    void CollideAgainst(const Paddle& paddle) noexcept;
+
+    ///
+    /// \return Whether the ball is colliding with the paddle.
+    ///
+    LEPONG_NODISCARD bool CollideAgainst(const Paddle& paddle) noexcept;
+
+public:
+    ///
+    /// \return The side the ball is touching.<br>
+    /// If the ball is not touching any side, this function returns <code>Side::None</code>.
+    ///
+    LEPONG_NODISCARD Side GetTouchingSide(const Vector2i& winSize) const noexcept;
+
+public:
+    ///
+    /// Resets the ball to its default state.
+    ///
+    void Reset(const Vector2i& winSize) noexcept;
 
 private:
     Graphics::Mesh& mMesh;
     GLuint& mProgram;
+
+private:
+    void OnPaddleCollision(const Paddle& paddle) noexcept;
 };
 
 ///
