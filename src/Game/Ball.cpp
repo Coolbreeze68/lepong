@@ -66,7 +66,7 @@ void Ball::OnPaddleCollision(const Paddle& paddle) noexcept
 
 Side Ball::GetTouchingSide(const Vector2i& winSize) const noexcept
 {
-    Side side = Side::None;
+    auto side = Side::None;
 
     if (position.x < radius)
     {
