@@ -41,7 +41,7 @@ static bool RegisterWindowClass() noexcept
     windowClass.lpfnWndProc = OnMessage;
     windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     windowClass.lpszClassName = skClassName;
-    windowClass.hIcon = (HICON)LoadImageW(nullptr, L"res\\ball.ico", IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
+    windowClass.hIcon = (HICON)LoadImageW(nullptr, L"res\\paddle.ico", IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
     windowClass.hInstance = sModule;
     return RegisterClassW(&windowClass);
 }
