@@ -36,15 +36,15 @@ static Graphics::Mesh sQuad;
 static Graphics::Mesh sTextureReadyQuad;
 
 // Ball.
-static constexpr float skBallSize = 40.0f;
+static constexpr float skBallRadius = 20.0f;
 
-static Ball sBall{ skBallSize, sTextureReadyQuad, sBallProgram };
+static Ball sBall{ skBallRadius, sTextureReadyQuad, sBallProgram };
 
 // Paddles.
 static constexpr Vector2f skPaddleSize = { 25.0f, 150.0f };
 
-static Paddle sPaddle1{ skPaddleSize, sQuad, sPaddleProgram };
-static Paddle sPaddle2{ skPaddleSize, sQuad, sPaddleProgram };
+static Paddle sPaddle1{ skPaddleSize,  1.0f, sQuad, sPaddleProgram };
+static Paddle sPaddle2{ skPaddleSize, -1.0f, sQuad, sPaddleProgram };
 
 ///
 /// A class holding the init and cleanup functions of any item.
@@ -529,6 +529,9 @@ void ResetGameState() noexcept
 
     sPaddle1.position = { 50.0f, skWinSize.y / 2.0f };
     sPaddle2.position = { skWinSize.x - 50.0f, skWinSize.y / 2.0f };
+
+    sBall.moveSpeed = 500.0f;
+    sBall.moveDirection = { 0.0f, 1.0f };
 }
 
 ///
@@ -545,6 +548,11 @@ void OnUpdate() noexcept
 
     sPaddle1.Update(kDelta);
     sPaddle2.Update(kDelta);
+
+    sBall.CollideAgainstTerrain(skWinSize);
+
+    sBall.CollideAgainst(sPaddle1);
+    sBall.CollideAgainst(sPaddle2);
 }
 
 float GetTimeDelta() noexcept

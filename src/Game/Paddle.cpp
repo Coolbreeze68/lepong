@@ -9,10 +9,11 @@
 namespace lepong
 {
 
-Paddle::Paddle(const Vector2f& size, Graphics::Mesh& mesh, GLuint& program) noexcept
+Paddle::Paddle(const Vector2f& size, float front, Graphics::Mesh& mesh, GLuint& program) noexcept
     : mMesh(mesh)
     , mProgram(program)
     , size(size)
+    , front(front)
 {
 }
 

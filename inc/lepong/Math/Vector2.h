@@ -54,6 +54,11 @@ public:
         return { x / s, y / s };
     }
 
+    LEPONG_NODISCARD constexpr Vector2 operator-() const noexcept
+    {
+        return { -x, -y };
+    }
+
 public:
     LEPONG_NODISCARD constexpr float Mag() const noexcept
     {
@@ -69,7 +74,6 @@ public:
 
 using Vector2f = Vector2<float>;
 using Vector2i = Vector2<int>;
-using Vector2u = Vector2<unsigned>;
 
 LEPONG_NODISCARD constexpr Vector2f Normalize(const Vector2f& v) noexcept
 {

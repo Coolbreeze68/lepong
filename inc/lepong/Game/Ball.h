@@ -8,6 +8,7 @@
 #include "lepong/Graphics/Mesh.h"
 
 #include "GameObject.h"
+#include "Paddle.h"
 
 namespace lepong
 {
@@ -23,6 +24,10 @@ public:
 public:
     void Update(float delta) noexcept override;
     void Render() const noexcept;
+
+public:
+    void CollideAgainstTerrain(const Vector2i& winSize) noexcept;
+    void CollideAgainst(const Paddle& paddle) noexcept;
 
 private:
     Graphics::Mesh& mMesh;

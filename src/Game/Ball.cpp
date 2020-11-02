@@ -18,12 +18,29 @@ Ball::Ball(float radius, Graphics::Mesh& mesh, GLuint& program) noexcept
 
 void Ball::Render() const noexcept
 {
-    Graphics::DrawQuad(mMesh, Vector2f{ radius, radius }, position, mProgram);
+    const auto kDiameter = radius * 2.0f;
+    Graphics::DrawQuad(mMesh, Vector2f{ kDiameter, kDiameter }, position, mProgram);
 }
 
 void Ball::Update(float delta) noexcept
 {
     GameObject::Update(delta);
+}
+
+void Ball::CollideAgainstTerrain(const Vector2i& winSize) noexcept
+{
+    const auto kCollidesTop = (position.y > static_cast<float>(winSize.y) - radius) && (moveDirection.y > 0);
+    const auto kCollidesBottom = (position.y < radius) && (moveDirection.y < 0);
+
+    if (kCollidesTop || kCollidesBottom)
+    {
+        moveDirection.y = -moveDirection.y;
+    }
+}
+
+void Ball::CollideAgainst(const Paddle& paddle) noexcept
+{
+
 }
 
 GLuint MakeBallFragmentShader() noexcept
@@ -42,13 +59,8 @@ GLuint MakeBallFragmentShader() noexcept
         vec2 normTexturePosition = vTexturePosition * 2.0 - vec2(1.0);
         float squareDistanceToCenter = dot(normTexturePosition, normTexturePosition);
 
-        if (squareDistanceToCenter > 0.5)
-        {
-            discard;
-        }
-
         // Simple glow.
-        float intensity = 1.0 - 2.0 * squareDistanceToCenter;
+        float intensity = 1.0 - squareDistanceToCenter;
 
         FragColor = vec4(vec3(intensity), 1.0);
     }
