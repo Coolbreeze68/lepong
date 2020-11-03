@@ -1,6 +1,8 @@
 # lepong
 A bare bones Pong clone made for Windows from scratch.
 
+![Gameplay screenshot.](lepong.png "Gameplay screenshot.")
+
 ## Building
 The following PowerShell code typically does the job. Or you can use the CMake GUI.
 ```
