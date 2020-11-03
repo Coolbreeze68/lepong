@@ -671,11 +671,11 @@ void OnUpdate() noexcept
     sPaddle1.Update(kDelta, skWinSize);
     sPaddle2.Update(kDelta, skWinSize);
 
-    sBall.CollideAgainstTerrain(skWinSize);
+    sBall.CollideWithTerrain(skWinSize);
 
     const auto kCollides =
-        sBall.CollideAgainst(sPaddle1) ||
-        sBall.CollideAgainst(sPaddle2);
+        sBall.CollideWith(sPaddle1) ||
+        sBall.CollideWith(sPaddle2);
 
     if (!kCollides)
     {

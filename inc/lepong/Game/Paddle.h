@@ -47,7 +47,7 @@ private:
     GLuint& mProgram;
 
 private:
-    void CollideAgainstTerrain(const Vector2i& winSize, const Vector2f& postUpdatePosition) noexcept;
+    void CollideWithTerrain(const Vector2i& winSize, const Vector2f& postUpdatePosition) noexcept;
 };
 
 ///

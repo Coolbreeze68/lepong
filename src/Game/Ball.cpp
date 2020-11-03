@@ -22,7 +22,7 @@ void Ball::Render() const noexcept
     Graphics::DrawQuad(mMesh, Vector2f{ kDiameter, kDiameter }, position, mProgram);
 }
 
-void Ball::CollideAgainstTerrain(const Vector2i& winSize) noexcept
+void Ball::CollideWithTerrain(const Vector2i& winSize) noexcept
 {
     const auto kCollidesTop = (position.y > static_cast<float>(winSize.y) - radius) && (moveDirection.y > 0);
     const auto kCollidesBottom = (position.y < radius) && (moveDirection.y < 0);
@@ -33,7 +33,7 @@ void Ball::CollideAgainstTerrain(const Vector2i& winSize) noexcept
     }
 }
 
-bool Ball::CollideAgainst(const Paddle& paddle) noexcept
+bool Ball::CollideWith(const Paddle& paddle) noexcept
 {
     // If the ball is moving toward the paddle, the sign of its x direction is opposite to
     // the way the paddle is facing.

@@ -35,12 +35,12 @@ public:
     void Render() const noexcept;
 
 public:
-    void CollideAgainstTerrain(const Vector2i& winSize) noexcept;
+    void CollideWithTerrain(const Vector2i& winSize) noexcept;
 
     ///
     /// \return Whether the ball is colliding with the paddle.
     ///
-    LEPONG_NODISCARD bool CollideAgainst(const Paddle& paddle) noexcept;
+    LEPONG_NODISCARD bool CollideWith(const Paddle& paddle) noexcept;
 
 public:
     ///
