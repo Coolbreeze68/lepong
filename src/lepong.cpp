@@ -456,14 +456,14 @@ bool InitGraphicsResources() noexcept
 }
 
 ///
-/// Creates a program from the provided shaders and loads the <b>uWinSize</b> uniform.<br>
+/// Creates a program using the provided shaders and loads the <b>uWinSize</b> uniform.<br>
 /// The provided shaders are then destroyed.
 ///
-LEPONG_NODISCARD static GLuint CreateProgramFromShadersWithWinSizeUniform(GLuint vertex, GLuint fragment) noexcept;
+LEPONG_NODISCARD static GLuint CreateProgramWithWinSizeUniform(GLuint vertex, GLuint fragment) noexcept;
 
 bool InitPaddleProgram() noexcept
 {
-    sPaddleProgram = CreateProgramFromShadersWithWinSizeUniform(
+    sPaddleProgram = CreateProgramWithWinSizeUniform(
         Graphics::MakeQuadVertexShader(), MakePaddleFragmentShader()
     );
 
@@ -475,7 +475,7 @@ bool InitPaddleProgram() noexcept
 ///
 static void LoadWinSizeUniform(GLuint program) noexcept;
 
-GLuint CreateProgramFromShadersWithWinSizeUniform(GLuint vertex, GLuint fragment) noexcept
+GLuint CreateProgramWithWinSizeUniform(GLuint vertex, GLuint fragment) noexcept
 {
     const auto kProgram = Graphics::CreateProgramFromShaders(vertex, fragment);
 
@@ -511,7 +511,7 @@ void CleanupPaddleProgram() noexcept
 
 bool InitBallProgram() noexcept
 {
-    sBallProgram = CreateProgramFromShadersWithWinSizeUniform(
+    sBallProgram = CreateProgramWithWinSizeUniform(
         Graphics::MakeTextureReadyQuadVertexShader(), MakeBallFragmentShader()
     );
 
