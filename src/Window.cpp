@@ -244,10 +244,10 @@ bool PollEvents() noexcept
     MSG msg = {};
     auto keepRunning = true;
 
-    while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
+    while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE) != 0)
     {
         Dispatch(msg);
-        keepRunning &= (msg.message != WM_QUIT);
+        keepRunning = (msg.message != WM_QUIT) && keepRunning;
     }
 
     return keepRunning;
