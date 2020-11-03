@@ -62,12 +62,6 @@ void SetMeshVertexLayout(const Mesh& mesh, const VertexLayout& vertexLayout) noe
 void DrawMesh(const Mesh& mesh) noexcept;
 
 ///
-/// Draws the provided mesh using the provided program.<br>
-/// If the provided mesh or the provided program is not valid, this function does nothing.
-///
-void DrawMesh(const Mesh& mesh, GLuint program) noexcept;
-
-///
 /// Destroys resources associated with the provided mesh.<br>
 /// If the provided mesh is not valid, this function does nothing.
 ///

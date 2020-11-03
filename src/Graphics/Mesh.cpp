@@ -95,14 +95,6 @@ void DrawMesh(const Mesh& mesh) noexcept
     gl::DrawElements(gl::Triangles, mesh.numIndices, gl::UnsignedInt, nullptr);
 }
 
-void DrawMesh(const Mesh& mesh, GLuint program) noexcept
-{
-    LEPONG_ASSERT_OR_RETURN(mesh.va && program);
-
-    gl::UseProgram(program);
-    DrawMesh(mesh);
-}
-
 void DestroyMesh(Mesh& mesh) noexcept
 {
     LEPONG_ASSERT_OR_RETURN(mesh.va);

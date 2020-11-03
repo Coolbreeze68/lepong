@@ -166,6 +166,8 @@ void DestroyDummyContext(const Context& context) noexcept
 
 void Cleanup() noexcept
 {
+    sInitialized = false;
+
     // Nothing to do here.
 }
 

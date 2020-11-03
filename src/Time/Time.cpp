@@ -30,6 +30,8 @@ bool Init() noexcept
 
 void Cleanup() noexcept
 {
+    sInitialized = false;
+
     // Nothing to do here.
 }
 
