@@ -2,7 +2,7 @@
 A bare bones Pong clone made for Windows from scratch.
 
 ## Building
-The following PowerShell code typically does the job. Or you could use the CMake GUI.
+The following PowerShell code typically does the job. Or you can use the CMake GUI.
 ```
 mkdir build
 cd build
