@@ -372,9 +372,7 @@ void LaunchBall() noexcept
 {
     sBall.moveSpeed = Ball::skDefaultMoveSpeed;
 
-    const Vector2i kMoveSign = { RandomSign(), RandomSign() };
-    sBall.moveDirection = { static_cast<float>(kMoveSign.x), static_cast<float>(kMoveSign.y) };
-
+    sBall.moveDirection = { RandomSignFloat(), RandomSignFloat() };
     sBall.moveDirection = Normalize(sBall.moveDirection);
 }
 

@@ -16,4 +16,9 @@ namespace lepong
 ///
 LEPONG_NODISCARD int RandomSign() noexcept;
 
+///
+/// \return Randomly <code>1.0f</code> or <code>-1.0f</code>.
+///
+LEPONG_NODISCARD float RandomSignFloat() noexcept;
+
 } // namespace lepong
