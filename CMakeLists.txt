@@ -2,12 +2,9 @@ cmake_minimum_required(VERSION 3.7)
 project(lepong)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:mainCRTStartup")
 
-if (CMAKE_BUILD_TYPE MATCHES RELEASE)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
-endif ()
-
-add_executable(lepong
+add_executable(lepong WIN32
     inc/lepong/Game/Ball.h
     inc/lepong/Game/Game.h
     inc/lepong/Game/GameObject.h
@@ -35,15 +32,16 @@ add_executable(lepong
     src/Graphics/LoadOpenGLFunction.h
     src/Graphics/Mesh.cpp
     src/Graphics/Quad.cpp
+    src/Math/Math.cpp
     src/Time/Time.cpp
     src/lepong.cpp
     src/Log.cpp
     src/Main.cpp
-    src/Window.cpp src/Math/Math.cpp)
+    src/Window.cpp)
 
 target_link_libraries(lepong
-    User32
-    OpenGL32
-    GDI32)
+    user32
+    opengl32
+    gdi32)
 
 target_include_directories(lepong PUBLIC inc PRIVATE src)
