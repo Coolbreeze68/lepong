@@ -40,8 +40,8 @@ add_executable(lepong WIN32
     src/Window.cpp)
 
 target_link_libraries(lepong
-    user32
-    opengl32
-    gdi32)
+    User32
+    Opengl32
+    GDI32)
 
 target_include_directories(lepong PUBLIC inc PRIVATE src)
