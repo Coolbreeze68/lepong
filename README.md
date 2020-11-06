@@ -1,6 +1,8 @@
 # lepong
 A bare bones Pong clone made for Windows from scratch.
 
+The left paddle is controlled with `w` and `s` and the right paddle with the up and down arrows.
+
 ![Gameplay screenshot.](lepong.png "Gameplay screenshot.")
 
 ## Building
