@@ -121,7 +121,7 @@ HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept
     return CreateWindowExW(
         WS_EX_APPWINDOW, skClassName,
         title,
-        WS_OVERLAPPEDWINDOW, // NOLINT: Clang-Tidy needs to chill the FUCK down.
+        WS_OVERLAPPEDWINDOW, // NOLINT: Clang-Tidy needs to chill.
         kArea.left, kArea.top,
         kSize.x, kSize.y,
         nullptr, nullptr, sModule,
@@ -145,10 +145,10 @@ RECT CenterClientArea(const Vector2i& size) noexcept
 
     return
     {
-        kScreenHalfSize.x - kAreaHalfSize.x, // left
-        kScreenHalfSize.y - kAreaHalfSize.y, // top
-        kScreenHalfSize.x + kAreaHalfSize.x, // right
-        kScreenHalfSize.y + kAreaHalfSize.y  // bottom
+        kScreenHalfSize.x - kAreaHalfSize.x, // Left.
+        kScreenHalfSize.y - kAreaHalfSize.y, // Top.
+        kScreenHalfSize.x + kAreaHalfSize.x, // Right.
+        kScreenHalfSize.y + kAreaHalfSize.y  // Bottom.
     };
 }
 
@@ -162,14 +162,14 @@ Vector2i AdjustAreaSize(const Vector2i& size) noexcept
 
     AdjustWindowRectEx(
         &areaRect,
-        WS_OVERLAPPEDWINDOW, // NOLINT: Shut up Clang-Tidy.
+        WS_OVERLAPPEDWINDOW, // NOLINT: Stop it.
         FALSE,
         WS_EX_APPWINDOW);
 
     return
     {
-        static_cast<int>(areaRect.right), // left and top are 0.
-        static_cast<int>(areaRect.bottom) // ^
+        static_cast<int>(areaRect.right), // Left and Top are 0.
+        static_cast<int>(areaRect.bottom)
     };
 }
 
@@ -194,7 +194,7 @@ void SetWindowResizable(HWND window, bool resizable) noexcept
 {
     LEPONG_ASSERT_OR_RETURN(window);
 
-    constexpr DWORD kResizableStyle = WS_MAXIMIZEBOX | WS_THICKFRAME; // NOLINT: PLEASE STOP.
+    constexpr DWORD kResizableStyle = WS_MAXIMIZEBOX | WS_THICKFRAME; // NOLINT: Please stop.
     const auto kCurrentStyle = GetWindowStyle(window);
 
     const auto kStyle = resizable

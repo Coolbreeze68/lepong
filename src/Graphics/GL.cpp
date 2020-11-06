@@ -71,7 +71,7 @@ void SetDummyPixelFormat(HDC device) noexcept
     {
         sizeof(kPixelFormat),
         1,
-        PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER, // NOLINT: Clang-Tidy, A Love Letter.
+        PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER, // NOLINT: Clang-Tidy, A Love Story.
         PFD_TYPE_RGBA,
         32,
         0, 0, 0, 0, 0, 0,
