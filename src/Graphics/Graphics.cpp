@@ -3,14 +3,12 @@
 //
 
 #include <memory> // For std::make_unique.
-
 #include <Windows.h>
 
-#include "LoadOpenGLFunction.h"
-
 #include "lepong/Assert.h"
-
 #include "lepong/Graphics/Graphics.h"
+
+#include "LoadOpenGLFunction.h"
 
 namespace lepong::Graphics
 {

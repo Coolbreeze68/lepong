@@ -8,18 +8,15 @@
 #include "lepong/Assert.h"
 #include "lepong/lepong.h"
 #include "lepong/Window.h"
-
 #include "lepong/Game/Game.h"
-
 #include "lepong/Graphics/Quad.h"
-
 #include "lepong/Math/Math.h"
-
 #include "lepong/Time/Time.h"
 
 namespace lepong
 {
 
+// Hardcoded but this should be fine on most monitors (maybe a bit small for 2k+).
 static constexpr Vector2i skWinSize = { 1280, 720 };
 
 static auto sInitialized = false;
@@ -31,7 +28,7 @@ static GLuint sPaddleProgram;
 static GLuint sBallProgram;
 
 static Graphics::Mesh sQuad;
-static Graphics::Mesh sTextureReadyQuad;
+static Graphics::Mesh sTexturedQuad;
 
 // Game state.
 static bool sPlaying = false;
@@ -40,7 +37,7 @@ static unsigned sPlayerScores[] = { 0u, 0u };
 // Ball.
 static constexpr float skBallRadius = 20.0f;
 
-static Ball sBall{ skBallRadius, sTextureReadyQuad, sBallProgram };
+static Ball sBall{ skBallRadius, sTexturedQuad, sBallProgram };
 
 // Paddles.
 static constexpr Vector2f skPaddleSize = { 25.0f, 150.0f };
@@ -432,12 +429,12 @@ static void CleanupQuad() noexcept;
 ///
 /// Let's go.
 ///
-LEPONG_NODISCARD static bool InitTextureReadyQuad() noexcept;
+LEPONG_NODISCARD static bool InitTexturedQuad() noexcept;
 
 ///
 /// Where is my super suit?
 ///
-static void CleanupTextureReadyQuad() noexcept;
+static void CleanupTexturedQuad() noexcept;
 
 ///
 /// All the graphics resource lifetimes.
@@ -447,7 +444,7 @@ static constexpr Lifetime kGraphicsResourceLifetimes[] =
     { InitPaddleProgram, CleanupPaddleProgram },
     { InitBallProgram, CleanupBallProgram },
     { InitQuad, CleanupQuad },
-    { InitTextureReadyQuad, CleanupTextureReadyQuad },
+    { InitTexturedQuad, CleanupTexturedQuad },
 };
 
 bool InitGraphicsResources() noexcept
@@ -534,15 +531,15 @@ void CleanupQuad() noexcept
     Graphics::DestroyMesh(sQuad);
 }
 
-bool InitTextureReadyQuad() noexcept
+bool InitTexturedQuad() noexcept
 {
-    sTextureReadyQuad = Graphics::MakeTextureReadyQuad();
-    return sTextureReadyQuad.IsValid();
+    sTexturedQuad = Graphics::MakeTexturedQuad();
+    return sTexturedQuad.IsValid();
 }
 
-void CleanupTextureReadyQuad() noexcept
+void CleanupTexturedQuad() noexcept
 {
-    Graphics::DestroyMesh(sTextureReadyQuad);
+    Graphics::DestroyMesh(sTexturedQuad);
 }
 
 void CleanupGraphicsResources() noexcept

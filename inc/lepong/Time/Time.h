@@ -4,8 +4,6 @@
 
 #pragma once
 
-
-
 #include "lepong/Attribute.h"
 
 namespace lepong::Time

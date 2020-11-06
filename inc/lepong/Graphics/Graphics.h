@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "GL.h"
-
 #include "lepong/Attribute.h"
+
+#include "GL.h"
 
 namespace gl = lepong::Graphics::GL;
 

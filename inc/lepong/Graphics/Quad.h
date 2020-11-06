@@ -19,7 +19,7 @@ LEPONG_NODISCARD Mesh MakeSimpleQuad() noexcept;
 ///
 /// Creates a quad mesh with texture data.
 ///
-LEPONG_NODISCARD Mesh MakeTextureReadyQuad() noexcept;
+LEPONG_NODISCARD Mesh MakeTexturedQuad() noexcept;
 
 ///
 /// Creates a quad vertex shader.<br><br>

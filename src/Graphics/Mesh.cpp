@@ -2,10 +2,9 @@
 // Created by lepouki on 10/23/2020.
 //
 
-#include <numeric>
+#include <numeric> // For std::accumulate.
 
 #include "lepong/Assert.h"
-
 #include "lepong/Graphics/Mesh.h"
 
 namespace lepong::Graphics

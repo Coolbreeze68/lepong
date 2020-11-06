@@ -26,7 +26,7 @@ add_executable(lepong WIN32
     src/Game/Ball.cpp
     src/Game/GameObject.cpp
     src/Game/Paddle.cpp
-    src/Graphics/Extensions.h
+    src/Graphics/WGLExtensions.h
     src/Graphics/GL.cpp
     src/Graphics/Graphics.cpp
     src/Graphics/LoadOpenGLFunction.h

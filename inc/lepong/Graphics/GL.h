@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "GLInterface.h"
-
 #include "lepong/Attribute.h"
 #include "lepong/OS.h"
+
+#include "GLInterface.h"
 
 LEPONG_DECL_WINDOWS_HANDLE(HWND);
 LEPONG_DECL_WINDOWS_HANDLE(HDC);

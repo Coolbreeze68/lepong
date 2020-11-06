@@ -5,7 +5,6 @@
 #pragma once
 
 #include <cstdint>
-
 #include <Windows.h> // Needed by "GL.h".
 #include <GL/GL.h>
 

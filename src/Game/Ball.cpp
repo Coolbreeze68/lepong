@@ -35,9 +35,11 @@ void Ball::CollideWithTerrain(const Vector2i& winSize) noexcept
 
 bool Ball::CollideWith(const Paddle& paddle) noexcept
 {
+    // Over-engineered collision code below.
+
     // If the ball is moving toward the paddle, the sign of its x direction is opposite to
     // the way the paddle is facing.
-    const auto kMovingToward = (moveDirection.x * paddle.front) < 0.0f;
+    const auto kMovingToward = (moveDirection.x * paddle.forward) < 0.0f;
 
     if (!kMovingToward)
     {
@@ -85,11 +87,11 @@ bool Ball::IsBehind(const Paddle& paddle) const noexcept
 {
     // We don't use the whole radius to avoid the ball from going through the paddle.
     // This means we don't cover all possible situations but this is good enough.
-    const auto kOuterEdge = position.x + (radius * 0.25f) * -paddle.front;
+    const auto kOuterEdge = position.x + (radius * 0.25f) * -paddle.forward;
 
-    const auto kPaddleFrontEdge = paddle.position.x + (paddle.size.x / 2.0f) * paddle.front;
+    const auto kPaddleFrontEdge = paddle.position.x + (paddle.size.x / 2.0f) * paddle.forward;
 
-    if (paddle.front > 0.0f)
+    if (paddle.forward > 0.0f)
     {
         return kOuterEdge < kPaddleFrontEdge;
     }
@@ -103,7 +105,7 @@ bool Ball::DoCollideWith(const Paddle& paddle) noexcept
 {
     auto collides = false;
 
-    // An extra paddle collision zone. Makes gameplay less punishing.
+    // An extra zone that extends the paddle. Makes gameplay less punishing.
     const auto kPaddleGraceZone = paddle.size.y * 0.1f;
 
     const auto kInRangeY =
@@ -114,7 +116,7 @@ bool Ball::DoCollideWith(const Paddle& paddle) noexcept
     {
         const auto kRadiusSquared = radius * radius;
 
-        const Vector2f kCenterProjectedOnPaddle = { paddle.position.x + (paddle.size.x / 2.0f) * paddle.front, position.y };
+        const Vector2f kCenterProjectedOnPaddle = { paddle.position.x + (paddle.size.x / 2.0f) * paddle.forward, position.y };
         const Vector2f kPaddleToBall = position - kCenterProjectedOnPaddle;
 
         if (kPaddleToBall.SquareMag() < kRadiusSquared)
@@ -152,7 +154,7 @@ GLuint MakeBallFragmentShader() noexcept
         // Simple glow.
         float intensity = 1.0 - squareDistanceToCenter;
 
-        FragColor = vec4(vec3(intensity), 1.0);
+        FragColor = vec4(intensity);
     }
 
     )";

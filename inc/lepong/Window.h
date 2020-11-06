@@ -4,10 +4,10 @@
 
 #pragma once
 
+#include "Math/Vector2.h"
+
 #include "Attribute.h"
 #include "OS.h"
-
-#include "Math/Vector2.h"
 
 LEPONG_DECL_WINDOWS_HANDLE(HWND);
 

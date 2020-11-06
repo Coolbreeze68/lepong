@@ -5,7 +5,6 @@
 #include <Windows.h>
 
 #include "lepong/Assert.h"
-
 #include "lepong/Time/Time.h"
 
 namespace lepong::Time

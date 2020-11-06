@@ -45,7 +45,7 @@ Mesh MakeQuadWithLayout(const Vertices& vertices, const VertexLayout& vertexLayo
     return kNewMesh;
 }
 
-Mesh MakeTextureReadyQuad() noexcept
+Mesh MakeTexturedQuad() noexcept
 {
     const Vertices kVertices =
     {

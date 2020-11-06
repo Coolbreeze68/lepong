@@ -2,13 +2,12 @@
 // Created by lepouki on 10/15/2020.
 //
 
-#include "Extensions.h"
-#include "LoadOpenGLFunction.h"
-
 #include "lepong/Assert.h"
 #include "lepong/Window.h"
-
 #include "lepong/Graphics/GL.h"
+
+#include "WGLExtensions.h"
+#include "LoadOpenGLFunction.h"
 
 namespace lepong::Graphics::GL
 {
