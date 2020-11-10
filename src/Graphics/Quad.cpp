@@ -85,7 +85,7 @@ GLuint MakeQuadVertexShader() noexcept
     return Graphics::CreateShaderFromSource(gl::VertexShader, kSource);
 }
 
-GLuint MakeTextureReadyQuadVertexShader() noexcept
+GLuint MakeTexturedQuadVertexShader() noexcept
 {
     constexpr auto kSource =
     R"(
@@ -106,6 +106,7 @@ GLuint MakeTextureReadyQuadVertexShader() noexcept
     {
         vec2 position = (aPosition * uSize) + uPosition;
         gl_Position = vec4(position * 2.0 / uWinSize - vec2(1.0), 0.0, 1.0);
+
         vTexturePosition = aTexturePosition;
     }
 

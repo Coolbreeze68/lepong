@@ -24,13 +24,13 @@ void Paddle::Render() const noexcept
 
 void Paddle::Update(float delta, const Vector2i& winSize) noexcept
 {
-    const auto kPostUpdatePosition = position;
+    const auto kPreUpdatePosition = position;
 
     GameObject::Update(delta);
-    CollideWithTerrain(winSize, kPostUpdatePosition);
+    CollideWithTerrain(winSize, kPreUpdatePosition);
 }
 
-void Paddle::CollideWithTerrain(const Vector2i& winSize, const Vector2f& postUpdatePosition) noexcept
+void Paddle::CollideWithTerrain(const Vector2i& winSize, const Vector2f& preUpdatePosition) noexcept
 {
     const auto kMinTerrainOffset = size.y * 0.1f;
 
@@ -39,7 +39,7 @@ void Paddle::CollideWithTerrain(const Vector2i& winSize, const Vector2f& postUpd
 
     if (kCollidesTop || kCollidesBottom)
     {
-        position = postUpdatePosition;
+        position = preUpdatePosition;
     }
 }
 

@@ -509,7 +509,7 @@ void CleanupPaddleProgram() noexcept
 bool InitBallProgram() noexcept
 {
     sBallProgram = CreateProgramWithWinSizeUniform(
-        Graphics::MakeTextureReadyQuadVertexShader(), MakeBallFragmentShader()
+        Graphics::MakeTexturedQuadVertexShader(), MakeBallFragmentShader()
     );
 
     return sBallProgram;
