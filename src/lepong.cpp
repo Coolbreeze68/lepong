@@ -186,7 +186,7 @@ void CleanupItemsStartingAt(ConstArrayReference<Lifetime, NumItems> lifetimes, u
 ///
 /// All the system lifetimes.
 ///
-static constexpr Lifetime kSystemLifetimes[] =
+static constexpr Lifetime skSystemLifetimes[] =
 {
     { Log::Init, Log::Cleanup },
     { Window::Init, Window::Cleanup },
@@ -197,7 +197,7 @@ static constexpr Lifetime kSystemLifetimes[] =
 
 bool InitGameSystems() noexcept
 {
-    return TryInitItems(kSystemLifetimes);
+    return TryInitItems(skSystemLifetimes);
 }
 
 ///
@@ -208,7 +208,7 @@ static void CleanupItems(ConstArrayReference<Lifetime, NumItems> itemLifetimes) 
 
 void CleanupGameSystems() noexcept
 {
-    CleanupItems(kSystemLifetimes);
+    CleanupItems(skSystemLifetimes);
 }
 
 template<std::size_t NumItems>
@@ -439,7 +439,7 @@ static void CleanupTexturedQuad() noexcept;
 ///
 /// All the graphics resource lifetimes.
 ///
-static constexpr Lifetime kGraphicsResourceLifetimes[] =
+static constexpr Lifetime skGraphicsResourceLifetimes[] =
 {
     { InitPaddleProgram, CleanupPaddleProgram },
     { InitBallProgram, CleanupBallProgram },
@@ -449,7 +449,7 @@ static constexpr Lifetime kGraphicsResourceLifetimes[] =
 
 bool InitGraphicsResources() noexcept
 {
-    return TryInitItems(kGraphicsResourceLifetimes);
+    return TryInitItems(skGraphicsResourceLifetimes);
 }
 
 ///
@@ -544,7 +544,7 @@ void CleanupTexturedQuad() noexcept
 
 void CleanupGraphicsResources() noexcept
 {
-    CleanupItems(kGraphicsResourceLifetimes);
+    CleanupItems(skGraphicsResourceLifetimes);
 }
 
 void CleanupState() noexcept

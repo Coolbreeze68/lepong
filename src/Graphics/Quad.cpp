@@ -93,9 +93,9 @@ GLuint MakeTexturedQuadVertexShader() noexcept
     #version 330 core
 
     layout (location = 0) in vec2 aPosition;
-    layout (location = 1) in vec2 aTexturePosition;
+    layout (location = 1) in vec2 aTextureCoords;
 
-    out vec2 vTexturePosition;
+    out vec2 vTextureCoords;
 
     uniform vec2 uWinSize;
 
@@ -107,7 +107,7 @@ GLuint MakeTexturedQuadVertexShader() noexcept
         vec2 position = (aPosition * uSize) + uPosition;
         gl_Position = vec4(position * 2.0 / uWinSize - vec2(1.0), 0.0, 1.0);
 
-        vTexturePosition = aTexturePosition;
+        vTextureCoords = aTextureCoords;
     }
 
     )";
