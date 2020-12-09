@@ -148,11 +148,11 @@ GLuint MakeBallFragmentShader() noexcept
 
     void main()
     {
-        vec2 normTextureCoords = vTextureCoords * 2.0 - vec2(1.0);
-        float squareDistanceToCenter = dot(normTextureCoords, normTextureCoords);
+        vec2 textureCoordsCentered = vTextureCoords * 2.0 - vec2(1.0);
+        float squareDistanceToCenter = dot(textureCoordsCentered, textureCoordsCentered);
 
         // Simple glow.
-        float intensity = 1.0 - squareDistanceToCenter;
+        float intensity = 1.0 - pow(squareDistanceToCenter, 3.0);
 
         FragColor = vec4(intensity);
     }

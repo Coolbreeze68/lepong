@@ -4,7 +4,7 @@
 
 #include <Windows.h>
 
-#include "lepong/Assert.h"
+#include "lepong/Check.h"
 #include "lepong/Window.h"
 
 namespace lepong::Window
@@ -20,10 +20,10 @@ LEPONG_NODISCARD static bool RegisterWindowClass() noexcept;
 
 bool Init() noexcept
 {
-    LEPONG_ASSERT_OR_RETURN_VAL(!sInitialized, false);
+    LEPONG_CHECK_OR_RETURN_VAL(!sInitialized, false);
 
     sInitialized = RegisterWindowClass();
-    LEPONG_ASSERT_OR_LOG(sInitialized, "Failed to register window class");
+    LEPONG_CHECK_OR_LOG(sInitialized, "Failed to register window class");
 
     return sInitialized;
 }
@@ -94,7 +94,7 @@ void SetKeyCallback(PFNKeyCallback callback) noexcept
 
 void Cleanup() noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(sInitialized);
+    LEPONG_CHECK_OR_RETURN(sInitialized);
 
     UnregisterClassW(skClassName, sModule);
     sInitialized = false;
@@ -108,7 +108,7 @@ LEPONG_NODISCARD static RECT CenterClientArea(const Vector2i& size) noexcept;
 
 HWND MakeWindow(const Vector2i& size, const wchar_t* title) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN_VAL(sInitialized, nullptr);
+    LEPONG_CHECK_OR_RETURN_VAL(sInitialized, nullptr);
 
     const auto kArea = CenterClientArea(size);
 
@@ -175,7 +175,7 @@ Vector2i AdjustAreaSize(const Vector2i& size) noexcept
 
 void DestroyWindow(HWND window) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(window);
+    LEPONG_CHECK_OR_RETURN(window);
 
     ::DestroyWindow(window);
 }
@@ -192,7 +192,7 @@ LEPONG_NODISCARD static DWORD GetWindowStyle(HWND window) noexcept;
 
 void SetWindowResizable(HWND window, bool resizable) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(window);
+    LEPONG_CHECK_OR_RETURN(window);
 
     constexpr DWORD kResizableStyle = WS_MAXIMIZEBOX | WS_THICKFRAME; // NOLINT: Please stop.
     const auto kCurrentStyle = GetWindowStyle(window);

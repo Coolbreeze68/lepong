@@ -4,7 +4,7 @@
 
 #include <Windows.h>
 
-#include "lepong/Assert.h"
+#include "lepong/Check.h"
 #include "lepong/Time/Time.h"
 
 namespace lepong::Time
@@ -17,7 +17,7 @@ static LARGE_INTEGER sPerformanceFrequency;
 
 bool Init() noexcept
 {
-    LEPONG_ASSERT_OR_RETURN_VAL(!sInitialized, false);
+    LEPONG_CHECK_OR_RETURN_VAL(!sInitialized, false);
 
     sInitialized = true;
 
@@ -36,7 +36,7 @@ void Cleanup() noexcept
 
 float Get() noexcept
 {
-    LEPONG_ASSERT_OR_RETURN_VAL(sInitialized, 0.0);
+    LEPONG_CHECK_OR_RETURN_VAL(sInitialized, 0.0);
 
     LARGE_INTEGER now;
     QueryPerformanceCounter(&now);

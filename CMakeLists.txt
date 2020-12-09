@@ -17,8 +17,8 @@ add_executable(lepong WIN32
     inc/lepong/Math/Math.h
     inc/lepong/Math/Vector2.h
     inc/lepong/Time/Time.h
-    inc/lepong/Assert.h
     inc/lepong/Attribute.h
+    inc/lepong/Check.h
     inc/lepong/lepong.h
     inc/lepong/Log.h
     inc/lepong/OS.h

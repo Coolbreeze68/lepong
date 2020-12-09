@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Assert.h"
 #include "Attribute.h"
+#include "Check.h"
 
 namespace lepong::Log
 {

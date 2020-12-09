@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <ctime>
 
-#include "lepong/Assert.h"
+#include "lepong/Check.h"
 #include "lepong/lepong.h"
 #include "lepong/Window.h"
 #include "lepong/Game/Game.h"
@@ -141,7 +141,7 @@ LEPONG_NODISCARD static bool TryInitItems(ConstArrayReference<Lifetime, NumItems
 
 bool Init() noexcept
 {
-    LEPONG_ASSERT_OR_RETURN_VAL(!sInitialized, false);
+    LEPONG_CHECK_OR_RETURN_VAL(!sInitialized, false);
 
     sInitialized = TryInitItems(kGameLifetimes);
     return sInitialized;
@@ -560,9 +560,14 @@ static auto sRunning = false;
 static void OnBeginRun() noexcept;
 
 ///
+/// Returns the time elapsed since this function was last called.
+///
+LEPONG_NODISCARD static float GetTimeDelta() noexcept;
+
+///
 /// Called at each game update.
 ///
-static void OnUpdate() noexcept;
+static void OnUpdate(float delta) noexcept;
 
 ///
 /// Called at each game frame.
@@ -576,14 +581,16 @@ static void OnFinishRun() noexcept;
 
 void Run() noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(sInitialized && !sRunning);
+    LEPONG_CHECK_OR_RETURN(sInitialized && !sRunning);
 
     sRunning = true;
     OnBeginRun();
 
     while (sRunning)
     {
-        OnUpdate();
+        const auto cDelta = GetTimeDelta();
+        OnUpdate(cDelta);
+
         OnRender();
     }
 
@@ -646,25 +653,30 @@ void PositionPaddlesOnTerrain() noexcept
     sPaddle2.position.x = skWinSize.x - kBorderOffset;
 }
 
-///
-/// Returns the time elapsed since this function was last called.
-///
-LEPONG_NODISCARD static float GetTimeDelta() noexcept;
+float GetTimeDelta() noexcept
+{
+    static auto sLastTime = 0.0f;
+
+    const auto kNow = Time::Get();
+    const auto kTimeDelta = kNow - sLastTime;
+    sLastTime = kNow;
+
+    return kTimeDelta;
+}
 
 ///
 /// Handles ball collision with terrain sides.
 ///
 static void CheckBallSideCollision() noexcept;
 
-void OnUpdate() noexcept
+void OnUpdate(float delta) noexcept
 {
-    const auto kDelta = GetTimeDelta();
     sRunning = Window::PollEvents();
 
-    sBall.Update(kDelta);
+    sBall.Update(delta);
 
-    sPaddle1.Update(kDelta, skWinSize);
-    sPaddle2.Update(kDelta, skWinSize);
+    sPaddle1.Update(delta, skWinSize);
+    sPaddle2.Update(delta, skWinSize);
 
     sBall.CollideWithTerrain(skWinSize);
 
@@ -676,17 +688,6 @@ void OnUpdate() noexcept
     {
         CheckBallSideCollision();
     }
-}
-
-float GetTimeDelta() noexcept
-{
-    static auto sLastTime = 0.0f;
-
-    const auto kNow = Time::Get();
-    const auto kTimeDelta = kNow - sLastTime;
-    sLastTime = kNow;
-
-    return kTimeDelta;
 }
 
 ///
@@ -731,7 +732,7 @@ void OnFinishRun() noexcept
 
 void Cleanup() noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(sInitialized && !sRunning);
+    LEPONG_CHECK_OR_RETURN(sInitialized && !sRunning);
 
     CleanupItems(kGameLifetimes);
     sInitialized = false;

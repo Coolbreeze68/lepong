@@ -4,7 +4,7 @@
 
 #include <numeric> // For std::accumulate.
 
-#include "lepong/Assert.h"
+#include "lepong/Check.h"
 #include "lepong/Graphics/Mesh.h"
 
 namespace lepong::Graphics
@@ -67,7 +67,7 @@ void LoadIndexData(Mesh& mesh, const Indices& indices) noexcept
 
 void SetMeshVertexLayout(const Mesh& mesh, const VertexLayout& vertexLayout) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(mesh.va);
+    LEPONG_CHECK_OR_RETURN(mesh.va);
 
     gl::BindVertexArray(mesh.va);
 
@@ -87,7 +87,7 @@ void SetMeshVertexLayout(const Mesh& mesh, const VertexLayout& vertexLayout) noe
 
 void DrawMesh(const Mesh& mesh) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(mesh.va);
+    LEPONG_CHECK_OR_RETURN( mesh.va);
 
     gl::BindBuffer(gl::ElementArrayBuffer, mesh.ib);
     gl::BindVertexArray(mesh.va);
@@ -96,7 +96,7 @@ void DrawMesh(const Mesh& mesh) noexcept
 
 void DestroyMesh(Mesh& mesh) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(mesh.va);
+    LEPONG_CHECK_OR_RETURN(mesh.va);
 
     gl::DeleteVertexArrays(1, &mesh.va);
     mesh.va = 0;

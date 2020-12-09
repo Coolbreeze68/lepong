@@ -5,7 +5,7 @@
 #include <memory> // For std::make_unique.
 #include <Windows.h>
 
-#include "lepong/Assert.h"
+#include "lepong/Check.h"
 #include "lepong/Graphics/Graphics.h"
 
 #include "LoadOpenGLFunction.h"
@@ -17,17 +17,17 @@ static HMODULE sOpenGLLibrary = nullptr;
 
 bool Init() noexcept
 {
-    LEPONG_ASSERT_OR_RETURN_VAL(!sOpenGLLibrary, false);
+    LEPONG_CHECK_OR_RETURN_VAL(!sOpenGLLibrary, false);
 
     sOpenGLLibrary = LoadLibraryA("OpenGL32.dll");
-    LEPONG_ASSERT_OR_LOG(sOpenGLLibrary, "Failed to load OpenGL");
+    LEPONG_CHECK_OR_LOG(sOpenGLLibrary, "Failed to load OpenGL");
 
     return sOpenGLLibrary;
 }
 
 void Cleanup() noexcept
 {
-    LEPONG_ASSERT_OR_RETURN(sOpenGLLibrary);
+    LEPONG_CHECK_OR_RETURN(sOpenGLLibrary);
 
     FreeLibrary(sOpenGLLibrary);
     sOpenGLLibrary = nullptr;
@@ -45,8 +45,8 @@ static void LogShaderInfo(GLuint shader) noexcept;
 
 GLuint CreateShaderFromSource(GLenum type, const char* source) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN_VAL(source, 0);
-    LEPONG_ASSERT_OR_RETURN_VAL(type == gl::VertexShader || type == gl::FragmentShader, 0);
+    LEPONG_CHECK_OR_RETURN_VAL(source, 0);
+    LEPONG_CHECK_OR_RETURN_VAL(type == gl::VertexShader || type == gl::FragmentShader, 0);
 
     GLuint shader = gl::CreateShader(type);
 
@@ -131,7 +131,7 @@ static void LogProgramInfo(GLuint program) noexcept;
 
 GLuint CreateProgramFromShaders(GLuint vert, GLuint frag) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN_VAL(vert && frag, 0);
+    LEPONG_CHECK_OR_RETURN_VAL(vert && frag, 0);
 
     GLuint program = gl::CreateProgram();
 
@@ -166,7 +166,7 @@ void LogProgramInfo(GLuint program) noexcept
 
 PROC LoadOpenGLFunction(const char* name) noexcept
 {
-    LEPONG_ASSERT_OR_RETURN_VAL(sOpenGLLibrary && name, nullptr);
+    LEPONG_CHECK_OR_RETURN_VAL(sOpenGLLibrary && name, nullptr);
 
     if (const auto kFn = wglGetProcAddress(name); kFn)
     {

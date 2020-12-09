@@ -6,7 +6,7 @@
 
 int main()
 {
-    LEPONG_ASSERT_OR_RETURN_VAL(lepong::Init(), -1);
+    LEPONG_CHECK_OR_RETURN_VAL(lepong::Init(), -1);
 
     lepong::Run();
     lepong::Cleanup();

@@ -2,7 +2,7 @@
 // Created by lepouki on 10/15/2020.
 //
 
-#include "lepong/Assert.h"
+#include "lepong/Check.h"
 #include "lepong/Window.h"
 #include "lepong/Graphics/GL.h"
 
@@ -33,7 +33,7 @@ static void DestroyDummyContext(const Context& context) noexcept;
 
 bool Init() noexcept
 {
-    LEPONG_ASSERT_OR_RETURN_VAL(!sInitialized, false);
+    LEPONG_CHECK_OR_RETURN_VAL(!sInitialized, false);
 
     const auto kContext = MakeDummyContext();
     MakeContextCurrent(kContext);
@@ -41,7 +41,7 @@ bool Init() noexcept
     sInitialized = LoadRequiredOpenGLFunctions();
     DestroyDummyContext(kContext);
 
-    LEPONG_ASSERT_OR_LOG(sInitialized, "Failed to load OpenGL functions");
+    LEPONG_CHECK_OR_LOG(sInitialized, "Failed to load OpenGL functions");
     return sInitialized;
 }
 
