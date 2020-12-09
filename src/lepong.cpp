@@ -588,6 +588,8 @@ void Run() noexcept
 
     while (sRunning)
     {
+        sRunning = Window::PollEvents();
+
         const auto cDelta = GetTimeDelta();
         OnUpdate(cDelta);
 
@@ -671,8 +673,6 @@ static void CheckBallSideCollision() noexcept;
 
 void OnUpdate(float delta) noexcept
 {
-    sRunning = Window::PollEvents();
-
     sBall.Update(delta);
 
     sPaddle1.Update(delta, skWinSize);
