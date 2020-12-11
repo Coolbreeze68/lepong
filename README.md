@@ -19,5 +19,3 @@ Right now it's pretty much a C interface with a C++ implementation and a few C++
 
 The big thing with this C-ish design is that initialization and cleanup has to be done manually for every resource.
 The major advantage is having full control over how data is managed, however it gets very tedious at times.
-
-Resources are mostly static which avoids dirty singleton designs.
